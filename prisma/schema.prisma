@@ -5,11 +5,206 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+enum ListingStatus {
+  ACTIVE
+  PENDING
+  SOLD
+  HIDDEN
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+  COMPLETED
+}
+
+enum ProductCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+model User {
+  id              String         @id @default(cuid())
+  auth0Id         String         @unique
+  email           String         @unique
+  username        String?        @unique
+  name            String?
+  avatarUrl       String?
+  bio             String?
+
+  universityId    Int?
+  campusId        Int?
+
+  university      University?    @relation(fields: [universityId], references: [id])
+  campus          Campus?        @relation(fields: [campusId], references: [id])
+
+  isVerified      Boolean        @default(false)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  listings        Listing[]
+  favorites       Favorite[]
+  orders          Order[]        @relation("UserOrders")
+  purchases       Order[]        @relation("UserPurchases")
+  reviewsGiven    Review[]       @relation("ReviewAuthor")
+  reviewsReceived Review[]       @relation("ReviewRecipient")
+  sentMessages    Message[]      @relation("MessageSender")
+  receivedMessages Message[]     @relation("MessageReceiver")
+  notifications   Notification[]
+}
+
+model University {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  campuses  Campus[]
+  users     User[]
+}
+
+model Campus {
+  id            Int       @id @default(autoincrement())
+  name          String
+  university    University @relation(fields: [universityId], references: [id])
+  universityId  Int
+
+  users         User[]
+  listings      Listing[]
+
+  @@unique([name, universityId]) // Prevent duplicates per university
+}
+
+// LISTINGS
+model Listing {
+  id            String        @id @default(cuid())
+  title         String
+  description   String
+  price         Float
+  category      Category      @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  condition     ProductCondition
+  status        ListingStatus @default(ACTIVE)
+  isNegotiable  Boolean       @default(true)
+
+  campus   Campus?  @relation(fields: [campusId], references: [id])
+  campusId Int?
+
+  owner         User          @relation(fields: [ownerId], references: [id])
+  ownerId       String
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?     // soft delete
+
+  images        ListingImage[]
+  favourites    Favorite[]
+  orders        Order[]
+}
+
+// LISTING IMAGES
+model ListingImage {
+  id        String   @id @default(cuid())
+  url       String
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  listingId String
+}
+
+// CATEGORIES
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  listings  Listing[]
+}
+
+// FAVORITES
+model Favorite {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  listingId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+}
+
+// ORDERS (final sale)
+model Order {
+  id          String       @id @default(cuid())
+  status      OrderStatus  @default(PENDING)
+  amountPaid  Float?
+  completedAt DateTime?
+
+  seller      User         @relation("UserOrders", fields: [sellerId], references: [id])
+  sellerId    String
+
+  buyer       User         @relation("UserPurchases", fields: [buyerId], references: [id])
+  buyerId     String
+
+  review      Review?      // back relation to Review
+
+  listing     Listing      @relation(fields: [listingId], references: [id])
+  listingId   String
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// REVIEWS
+model Review {
+  id           String     @id @default(cuid())
+  rating       Int        // 1-5
+  comment      String?
+
+  author       User       @relation("ReviewAuthor", fields: [authorId], references: [id])
+  authorId     String
+
+  recipient    User       @relation("ReviewRecipient", fields: [recipientId], references: [id])
+  recipientId  String
+
+  order        Order      @relation(fields: [orderId], references: [id])
+  orderId      String     @unique
+
+  createdAt    DateTime   @default(now())
+
+  @@unique([authorId, orderId])
+}
+
+// chat (DMs)
+model Message {
+  id          String     @id @default(cuid())
+  content     String
+  createdAt   DateTime   @default(now())
+
+  sender      User       @relation("MessageSender", fields: [senderId], references: [id])
+  senderId    String
+
+  receiver    User       @relation("MessageReceiver", fields: [receiverId], references: [id])
+  receiverId  String
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  title      String
+  body       String
+  isRead     Boolean  @default(false)
+
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+
+  createdAt  DateTime @default(now())
 }
