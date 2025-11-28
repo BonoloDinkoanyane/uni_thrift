@@ -1,12 +1,15 @@
 import Hero from "../components/Hero";
-import BottomNavbar from "../components/BottomNavbar";
-import { ModeToggle } from "../components/ModeToggle";
+import HowItWorks from "../components/HowItWorks";
+import FAQSection from "../components/FAQSection";
+import Footer from "../components/Footer";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <ModeToggle />
+      <HowItWorks />
+      <FAQSection />
+      <Footer />
     </>
   );
 }

@@ -1,142 +1,166 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Heart, MapPin, MessageCircle, ShoppingBag, TrendingUp, Users, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Heart,
+  MapPin,
+  MessageCircle,
+  ShoppingBag,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Zap,
+  Star,
+  Rocket
+} from "lucide-react";
 import Link from "next/link";
-import vercelLogo from "../../public/vercel.svg";
 
 export default function Hero() {
-    return (
-        <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background overflow-hidden">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-40 md:pt-40 md:pb-52 min-h-[85vh] flex items-center">
-        {/* Hero background image */}
-        <div className="absolute inset-0 -z-10">
-          <img 
-            src={vercelLogo} 
-            alt="Students on campus" 
+      <section className="relative pt-20 pb-32 md:pt-32 md:pb-40 min-h-[90vh] flex items-center">
+        {/* Background pattern */}
+        <div className="absolute inset-0 -z-20 opacity-30">
+          <img
+            src="/hero-pattern.png"
+            alt=""
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-linear-to-br from-background/95 via-background/85 to-background/75" />
-          <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent" />
         </div>
-        
-        {/* Animated pattern overlay */}
-        <div className="absolute inset-0 -z-5 opacity-10">
-          <img 
-            src={vercelLogo} 
-            alt="" 
-            className="w-full h-full object-cover animate-pulse"
-            style={{ animationDuration: '4s' }}
-          />
-        </div>
-        
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 -z-10 bg-linear-to-br from-primary/10 via-secondary/10 to-accent/10" />
+
+        {/* Floating gradient orbs */}
+        <div className="absolute top-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 left-10 w-80 h-80 bg-secondary/20 rounded-full blur-3xl animate-float-delayed" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-3xl animate-pulse" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-6xl mx-auto">
             {/* Content */}
-            <div className="text-center animate-in fade-in slide-in-from-bottom duration-700">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 border border-primary/20">
-                <Zap className="w-4 h-4 text-primary animate-pulse" />
-                <span className="text-sm font-medium text-primary">Campus Marketplace Revolution</span>
+            <div className="text-center animate-fade-in-up">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-primary/20 to-secondary/20 backdrop-blur-sm rounded-full mb-8 border border-primary/30 shadow-lg">
+                <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                <span className="text-sm font-semibold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  The #1 Student Marketplace 🎓
+                </span>
               </div>
-              
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-                Your Campus,
-                <br />
-                <span className="bg-linear-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient bg-size-[200%_auto]">
-                  Your Marketplace
+
+              {/* Main Headline */}
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tight">
+                <span className="block mb-2">Buy. Sell. Swap.</span>
+                <span className="block bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-gradient bg-size-[200%_auto]">
+                  All Campus Vibes ✨
                 </span>
               </h1>
-              
-              <p className="text-xl md:text-2xl text-foreground/80 mb-10 max-w-3xl mx-auto font-medium">
-                Buy, sell, and swap with verified students on your campus. 
-                From textbooks to tech, furniture to fashion—find it all in one swipe.
+
+              {/* Subheadline */}
+              <p className="text-lg md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
+                Your campus marketplace where students buy, sell, and trade everything from textbooks to tech.
+                <span className="text-primary font-bold"> Zero fees. All vibes. 🔥</span>
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <Button asChild size="lg" className="bg-linear-to-r from-primary to-accent hover:opacity-90 shadow-2xl text-lg px-10 py-6 hover-scale">
-                  <Link href="/browse">Start Shopping</Link>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-linear-to-r from-primary to-secondary hover:opacity-90 shadow-2xl text-lg px-10 py-7 font-bold transition-all hover:scale-105 hover:shadow-primary/50"
+                >
+                  <Link href="/browse" className="flex items-center gap-2">
+                    Start Shopping <Rocket className="w-5 h-5" />
+                  </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="text-lg px-10 py-6 hover-scale border-2 backdrop-blur-sm bg-background/50">
-                  <Link href="/sell">List an Item</Link>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-10 py-7 font-bold border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all hover:scale-105"
+                >
+                  <Link href="/register" className="flex items-center gap-2">
+                    Join Free <ArrowRight className="w-5 h-5" />
+                  </Link>
                 </Button>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto backdrop-blur-sm bg-background/30 rounded-2xl p-8 border border-border/50">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">10k+</div>
-                  <div className="text-sm text-muted-foreground">Active Users</div>
-                </div>
-                <div className="text-center border-x border-border/50">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">50k+</div>
-                  <div className="text-sm text-muted-foreground">Items Listed</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">200+</div>
-                  <div className="text-sm text-muted-foreground">Campuses</div>
-                </div>
+              {/* Live Stats with Animation */}
+              <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <StatCard number="15k+" label="Students" emoji="👥" />
+                <StatCard number="75k+" label="Items" emoji="📦" />
+                <StatCard number="250+" label="Campuses" emoji="🏫" />
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Floating badges */}
-        <div className="absolute top-24 right-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-2xl animate-bounce backdrop-blur-sm" style={{ animationDuration: '3s' }}>
-          <div className="text-sm font-semibold">🔥 Trending Now</div>
-        </div>
-        <div className="absolute bottom-32 left-8 bg-accent text-accent-foreground px-6 py-3 rounded-full shadow-2xl animate-bounce delay-500 backdrop-blur-sm" style={{ animationDuration: '3s' }}>
-          <div className="text-sm font-semibold">💯 Verified Students</div>
-        </div>
+
       </section>
 
-      {/* Features */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-linear-to-b from-background via-muted/30 to-background -z-10" />
-        
+      {/* Features Section */}
+      <section className="py-24 relative">
+        <div className="absolute inset-0 bg-linear-to-b from-muted/30 via-background to-background -z-10" />
+
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom duration-700">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Built for <span className="text-primary">Student Life</span>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-6xl font-black mb-4">
+              Why Students <span className="text-primary">Love</span> Us
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Everything you need to buy, sell, and connect with your campus community
+              Built by students, for students. Everything you need in one app.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             <FeatureCard
-              icon={<Heart className="w-7 h-7" />}
-              title="Swipe & Match"
-              description="Addictive browsing experience inspired by apps you already love"
+              icon={<Heart className="w-8 h-8" />}
+              title="Swipe to Shop"
+              description="Tinder-style browsing makes shopping addictive and fun"
+              gradient="from-primary/10 to-primary/5"
             />
             <FeatureCard
-              icon={<Users className="w-7 h-7" />}
-              title="Verified Students"
-              description="Campus-only access with .edu email verification for safety"
+              icon={<Users className="w-8 h-8" />}
+              title="Campus Only"
+              description="Verified .edu emails only. Your classmates, your deals"
+              gradient="from-secondary/10 to-secondary/5"
             />
             <FeatureCard
-              icon={<MessageCircle className="w-7 h-7" />}
-              title="Instant Messaging"
-              description="Chat directly with buyers and sellers in real-time"
+              icon={<MessageCircle className="w-8 h-8" />}
+              title="Instant Chat"
+              description="DM sellers instantly. No waiting, no hassle"
+              gradient="from-accent/10 to-accent/5"
             />
             <FeatureCard
-              icon={<MapPin className="w-7 h-7" />}
-              title="Campus Proximity"
-              description="See how far items are from you with distance tracking"
+              icon={<MapPin className="w-8 h-8" />}
+              title="Super Local"
+              description="See exactly how far items are from your dorm"
+              gradient="from-primary/10 to-accent/5"
             />
           </div>
 
           {/* Popular Categories */}
-          <div className="mt-20">
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-12">Popular Categories</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {['📚 Textbooks', '💻 Electronics', '🛋️ Furniture', '👕 Fashion', '🎮 Gaming', '🎨 Art Supplies'].map((category, idx) => (
-                <div 
+          <div className="mt-24">
+            <h3 className="text-3xl md:text-4xl font-black text-center mb-12">
+              Shop by <span className="text-secondary">Category</span>
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
+              {[
+                { emoji: '📚', name: 'Textbooks', color: 'from-primary/20 to-primary/10' },
+                { emoji: '💻', name: 'Tech', color: 'from-secondary/20 to-secondary/10' },
+                { emoji: '🛋️', name: 'Furniture', color: 'from-accent/20 to-accent/10' },
+                { emoji: '👕', name: 'Fashion', color: 'from-primary/20 to-secondary/10' },
+                { emoji: '🎮', name: 'Gaming', color: 'from-secondary/20 to-accent/10' },
+                { emoji: '🎨', name: 'Art', color: 'from-accent/20 to-primary/10' }
+              ].map((category, idx) => (
+                <div
                   key={idx}
-                  className="bg-card hover:bg-accent/50 rounded-xl p-6 text-center cursor-pointer transition-all hover-scale shadow-sm"
+                  className={`bg-linear-to-br ${category.color} hover:scale-105 rounded-2xl p-6 text-center cursor-pointer transition-all shadow-lg hover:shadow-xl group`}
                 >
-                  <div className="text-3xl mb-2">{category.split(' ')[0]}</div>
-                  <div className="text-sm font-medium">{category.split(' ').slice(1).join(' ')}</div>
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">{category.emoji}</div>
+                  <div className="text-sm font-bold">{category.name}</div>
                 </div>
               ))}
             </div>
@@ -145,43 +169,60 @@ export default function Hero() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-linear-to-t from-background via-primary/5 to-background -z-10" />
-        
+      <section className="py-24 relative">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-secondary/20 to-accent/20" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/30 rounded-full blur-3xl" />
+        </div>
+
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto relative">
-            {/* Decorative elements */}
-            <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary/20 rounded-full blur-3xl -z-10 animate-pulse" />
-            <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-accent/20 rounded-full blur-3xl -z-10 animate-pulse delay-500" />
-            
-            <div className="bg-linear-to-br from-primary via-primary/90 to-accent rounded-3xl p-12 md:p-16 text-center text-primary-foreground shadow-2xl animate-in fade-in scale-in duration-700">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">
-                Join 10,000+ Students Today
+            <div className="bg-linear-to-br from-primary via-secondary to-accent rounded-3xl p-12 md:p-16 text-center text-primary-foreground shadow-2xl">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+                <Star className="w-4 h-4 fill-current" />
+                <span className="text-sm font-bold">Join 15,000+ Students</span>
+              </div>
+
+              <h2 className="text-4xl md:text-6xl font-black mb-6">
+                Ready to Start Trading?
               </h2>
-              <p className="text-lg md:text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-                Sign up with your .edu email and discover the easiest way to buy and sell on campus
+              <p className="text-lg md:text-xl opacity-95 mb-10 max-w-2xl mx-auto font-medium">
+                Sign up with your .edu email and start buying, selling, and swapping today.
+                It's completely free! 🎉
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" variant="secondary" className="shadow-lg text-lg px-8 hover-scale">
-                  <Link href="/auth">Get Started Free</Link>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="shadow-xl text-lg px-10 py-7 font-bold hover:scale-105 transition-all"
+                >
+                  <Link href="/register">Get Started Free</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 text-lg px-8 hover-scale">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-10 py-7 font-bold hover:scale-105 transition-all"
+                >
                   <Link href="/browse">Browse Listings</Link>
                 </Button>
               </div>
-              
-              <div className="mt-10 flex items-center justify-center gap-8 text-sm opacity-80">
+
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold opacity-90">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary-foreground rounded-full animate-pulse" />
-                  <span>No fees</span>
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                  <span>100% Free</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary-foreground rounded-full animate-pulse delay-200" />
-                  <span>Verified students only</span>
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
+                  <span>No Hidden Fees</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary-foreground rounded-full animate-pulse delay-500" />
-                  <span>100% free to use</span>
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
+                  <span>Students Only</span>
                 </div>
               </div>
             </div>
@@ -189,17 +230,53 @@ export default function Hero() {
         </div>
       </section>
     </div>
-    )
+  );
 }
 
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => {
+// Stat Card Component
+const StatCard = ({ number, label, emoji }: { number: string; label: string; emoji: string }) => {
   return (
-    <div className="bg-card rounded-2xl p-8 shadow-soft hover:shadow-medium transition-shadow">
-      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4">
+    <div className="backdrop-blur-sm bg-card/50 border border-border/50 rounded-2xl p-6 hover:scale-105 transition-all shadow-lg hover:shadow-xl">
+      <div className="text-4xl mb-2">{emoji}</div>
+      <div className="text-3xl md:text-4xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent mb-1">
+        {number}
+      </div>
+      <div className="text-sm text-muted-foreground font-semibold">{label}</div>
+    </div>
+  );
+};
+
+// Floating Badge Component
+const FloatingBadge = ({ className, text, delay }: { className: string; text: string; delay: number }) => {
+  return (
+    <div
+      className={`${className} bg-linear-to-r from-primary to-secondary text-primary-foreground px-6 py-3 rounded-full shadow-2xl backdrop-blur-sm font-bold text-sm animate-bounce`}
+      style={{ animationDuration: '3s', animationDelay: `${delay}ms` }}
+    >
+      {text}
+    </div>
+  );
+};
+
+// Feature Card Component
+const FeatureCard = ({
+  icon,
+  title,
+  description,
+  gradient
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  gradient: string;
+}) => {
+  return (
+    <div className={`bg-linear-to-br ${gradient} border border-border/50 rounded-2xl p-8 hover:scale-105 transition-all shadow-lg hover:shadow-xl group`}>
+      <div className="w-14 h-14 bg-linear-to-br from-primary to-secondary rounded-xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
+      <h3 className="text-xl font-black mb-3">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed">{description}</p>
     </div>
   );
 };

@@ -58,86 +58,93 @@
 }
 
 /* ======================================
-   ROOT THEME — Glacier palette applied
+   ROOT THEME — Vibrant Student Palette
    ====================================== */
 :root {
-  --background: oklch(0.986 0.007 233.60);
-  --foreground: oklch(0.129 0.042 264.695);
+  --background: oklch(0.99 0.005 280);
+  --foreground: oklch(0.15 0.02 280);
 
-  --card: oklch(0.986 0.007 233.60);
-  --card-foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(0.99 0.005 280);
+  --card-foreground: oklch(0.15 0.02 280);
 
-  --popover: oklch(0.986 0.007 233.60);
-  --popover-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(0.99 0.005 280);
+  --popover-foreground: oklch(0.15 0.02 280);
 
-  --primary: oklch(0.627 0.177 231.33);
-  --primary-foreground: oklch(0.979 0.015 236.62);
+  /* Vibrant coral/pink primary */
+  --primary: oklch(0.65 0.22 15);
+  --primary-foreground: oklch(0.99 0.01 15);
 
-  --secondary: oklch(0.493 0.052 261.38);
-  --secondary-foreground: oklch(0.986 0.007 233.60);
+  /* Electric purple secondary */
+  --secondary: oklch(0.55 0.25 290);
+  --secondary-foreground: oklch(0.99 0.01 290);
 
-  --muted: oklch(0.86 0.01 233.6);
-  --muted-foreground: oklch(0.129 0.042 264.695);
+  --muted: oklch(0.95 0.01 280);
+  --muted-foreground: oklch(0.45 0.02 280);
 
-  --accent: oklch(0.986 0.007 233.60);
-  --accent-foreground: oklch(0.556 0.045 262.20);
+  /* Teal accent */
+  --accent: oklch(0.6 0.18 180);
+  --accent-foreground: oklch(0.99 0.01 180);
 
-  --destructive: oklch(0.5 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 25);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.99 0.01 25);
 
-  --border: oklch(0.86 0.01 233.6);
-  --input: oklch(0.86 0.01 233.6);
-  --ring: oklch(0.627 0.177 231.33);
+  --border: oklch(0.92 0.01 280);
+  --input: oklch(0.92 0.01 280);
+  --ring: oklch(0.65 0.22 15);
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 }
 
+
 /* ==========================================
-   DARK MODE THEME — Glacier dark equivalent
+   DARK MODE THEME — Vibrant Dark Mode
    ========================================== */
 .dark {
-  --background: oklch(0.129 0.042 264.695); /* Dark glacier background */
-  --foreground: oklch(0.986 0.007 233.60); /* Light text */
+  --background: oklch(0.12 0.02 280);
+  --foreground: oklch(0.98 0.01 280);
 
-  --card: oklch(0.493 0.052 261.38);
-  --card-foreground: oklch(0.986 0.007 233.60);
+  --card: oklch(0.18 0.03 280);
+  --card-foreground: oklch(0.98 0.01 280);
 
-  --popover: oklch(0.493 0.052 261.38);
-  --popover-foreground: oklch(0.986 0.007 233.60);
+  --popover: oklch(0.18 0.03 280);
+  --popover-foreground: oklch(0.98 0.01 280);
 
-  --primary: oklch(0.627 0.177 231.33);
-  --primary-foreground: oklch(0.979 0.015 236.62);
+  /* Bright coral/pink primary */
+  --primary: oklch(0.7 0.24 15);
+  --primary-foreground: oklch(0.99 0.01 15);
 
-  --secondary: oklch(0.324 0.052 261.38);
-  --secondary-foreground: oklch(0.986 0.007 233.60);
+  /* Vibrant purple secondary */
+  --secondary: oklch(0.6 0.27 290);
+  --secondary-foreground: oklch(0.99 0.01 290);
 
-  --muted: oklch(0.324 0.052 261.38);
-  --muted-foreground: oklch(0.627 0.177 231.33);
+  --muted: oklch(0.25 0.03 280);
+  --muted-foreground: oklch(0.65 0.05 280);
 
-  --accent: oklch(0.324 0.052 261.38);
-  --accent-foreground: oklch(0.556 0.045 262.20);
+  /* Bright teal accent */
+  --accent: oklch(0.65 0.2 180);
+  --accent-foreground: oklch(0.12 0.02 180);
 
-  --destructive: oklch(0.5 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 25);
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.99 0.01 25);
 
-  --border: oklch(0.324 0.052 261.38);
-  --input: oklch(0.324 0.052 261.38);
-  --ring: oklch(0.627 0.177 231.33);
+  --border: oklch(0.25 0.03 280);
+  --input: oklch(0.25 0.03 280);
+  --ring: oklch(0.7 0.24 15);
 
-  --sidebar: oklch(0.493 0.052 261.38);
-  --sidebar-foreground: oklch(0.986 0.007 233.60);
-  --sidebar-primary: oklch(0.627 0.177 231.33);
-  --sidebar-primary-foreground: oklch(0.979 0.015 236.62);
-  --sidebar-accent: oklch(0.324 0.052 261.38);
-  --sidebar-accent-foreground: oklch(0.556 0.045 262.20);
-  --sidebar-border: oklch(0.324 0.052 261.38);
-  --sidebar-ring: oklch(0.627 0.177 231.33);
+  --sidebar: oklch(0.18 0.03 280);
+  --sidebar-foreground: oklch(0.98 0.01 280);
+  --sidebar-primary: oklch(0.7 0.24 15);
+  --sidebar-primary-foreground: oklch(0.99 0.01 15);
+  --sidebar-accent: oklch(0.25 0.03 280);
+  --sidebar-accent-foreground: oklch(0.65 0.2 180);
+  --sidebar-border: oklch(0.25 0.03 280);
+  --sidebar-ring: oklch(0.7 0.24 15);
 
-  --chart-1: oklch(0.627 0.177 231.33);
-  --chart-2: oklch(0.493 0.052 261.38);
-  --chart-3: oklch(0.556 0.045 262.20);
-  --chart-4: oklch(0.324 0.052 261.38);
-  --chart-5: oklch(0.493 0.052 261.38);
+  --chart-1: oklch(0.7 0.24 15);
+  --chart-2: oklch(0.6 0.27 290);
+  --chart-3: oklch(0.65 0.2 180);
+  --chart-4: oklch(0.6 0.2 60);
+  --chart-5: oklch(0.65 0.22 340);
 }
 
 /* GLOBAL BASE */
@@ -145,7 +152,103 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ==========================================
+   CUSTOM ANIMATIONS FOR AUTH PAGES
+   ========================================== */
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes float-delayed {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+
+  66% {
+    transform: translate(20px, -20px) scale(1.1);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.animate-float {
+  animation: float 20s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 25s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%);
+  background-size: 1000px 100%;
 }
