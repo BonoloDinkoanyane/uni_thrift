@@ -1,4 +1,5 @@
-import FAQSection from "../components/FAQSection";
+import FAQCategory from "../components/FAQCategory";
+import Footer from "../components/Footer";
 
 export default function FAQPage() {
     return (
@@ -13,13 +14,21 @@ export default function FAQPage() {
                         Frequently Asked <span className="text-primary">Questions</span>
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                        Find answers to common questions about UniThrift
+                        Everything you need to know about buying, selling, and using UniThrift
                     </p>
                 </div>
             </section>
 
-            {/* FAQ Section */}
-            <FAQSection />
+            {/* FAQ Categories */}
+            <section className="py-12 relative">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-4xl mx-auto">
+                        <FAQCategory />
+                    </div>
+                </div>
+            </section>
+
+            <Footer />
         </div>
     );
 }
