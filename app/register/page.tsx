@@ -8,8 +8,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { registerSchema } from "../utils/zodSchema";
+import { parseWithZod } from "@conform-to/zod";
+import { useActionState } from "react";
+import { useForm } from "@conform-to/react";
+import { registerUser } from "../actions";
 
-export default function RegisterPage() {
+export default function Register() {
+
+    const [lastResult, action] = useActionState(registerUser, undefined);
+    const [form, fields] = useForm({
+        lastResult,
+        onValidate({formData}) {
+            return parseWithZod(formData,{
+                schema: registerSchema,
+            })
+        }, 
+        shouldValidate: "onBlur", //validates when the users clicks out of the input field
+        shouldRevalidate: "onInput", //revalidates when the user types in the input field
+    });
     const router = useRouter();
     const [formData, setFormData] = useState({
         fullName: "",
