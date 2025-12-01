@@ -1,8 +1,8 @@
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
-    const session = await getSession();
+    const session = await auth0.getSession();
 
     if (!session?.user) {
         redirect("/login?returnTo=/profile");
@@ -16,7 +16,7 @@ export default async function ProfilePage() {
                     <div className="bg-card border border-border rounded-2xl p-8 mb-8">
                         <div className="flex items-center gap-6">
                             {/* Avatar */}
-                            <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                            <div className="w-24 h-24 bg-linear-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-3xl font-bold">
                                 {session.user.name?.charAt(0) || session.user.email?.charAt(0)}
                             </div>
 

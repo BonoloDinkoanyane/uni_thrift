@@ -1,3 +1,5 @@
+"use server";
+
 import { PrismaClient } from "../lib/generated/prisma";
 
 //singleton code prevents many instances of PrismaClient in development
