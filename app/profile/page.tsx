@@ -95,7 +95,7 @@ export default async function ProfilePage() {
               <div className="relative">
                 <Avatar className="w-24 h-24 border-4 border-primary/10">
                   <AvatarImage src={data?.avatarUrl || undefined} />
-                  <AvatarFallback className="text-2xl bg-linear-to-br from-primary/20 to-accent/20">
+                  <AvatarFallback className="text-2xl bg-gradient-to-br from-primary/20 to-accent/20">
                     {data?.name?.charAt(0) || data?.email?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
@@ -171,7 +171,7 @@ export default async function ProfilePage() {
                 {listings.map((listing) => (
                   <Link key={listing.id} href={`/product/${listing.id}`}>
                     <Card className="cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
-                      <div className="aspect-square bg-linear-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+                      <div className="aspect-square bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
                         {listing.images && listing.images[0] ? (
                           <img
                             src={listing.images[0]}

@@ -11,8 +11,9 @@ import { parseWithZod } from "@conform-to/zod";
 import { useActionState } from "react";
 import { useForm } from "@conform-to/react";
 import { registerUser } from "../actions";
+import { requireUser } from "../utils/hooks";
 
-export default function Register() {
+export default async function Register() {
 
     const [lastResult, action] = useActionState(registerUser, undefined);
     const [form, fields] = useForm({
@@ -93,6 +94,9 @@ export default function Register() {
     const handleSocialSignup = (provider: string) => {
         window.location.href = `/auth/login?connection=${provider}&screen_hint=signup`;
     };
+
+      const session = await requireUser();
+    
 
     return (
         <AuthCard
