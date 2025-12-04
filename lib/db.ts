@@ -1,14 +1,17 @@
 import { PrismaClient } from "../lib/generated/prisma";
+import { PrismaNeon } from '@prisma/adapter-neon'
+import dotenv from 'dotenv'
 
-//singleton code prevents many instances of PrismaClient in development
-// so that we don't exceed database connection limits
+dotenv.config()
+const connectionString = `${process.env.DATABASE_URL}`
 
+const adapter = new PrismaNeon({ connectionString })
+const prisma = new PrismaClient({ adapter })
+
+// Singleton code prevents creating multiple PrismaClients in development
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["query", "error", "warn"],
-  });
-
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+// Export the singleton instance so other files can import it
+export const db = globalForPrisma.prisma || prisma;
