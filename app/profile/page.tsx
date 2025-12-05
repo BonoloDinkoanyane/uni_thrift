@@ -79,6 +79,7 @@ async function getListingData(userId: string) {
 }
 
 export default async function ProfilePage() {
+
   const session = await requireUser();
   const auth0Id = session!.user.sub;
 

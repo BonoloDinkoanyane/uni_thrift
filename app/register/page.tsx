@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,18 +13,17 @@ import { parseWithZod } from "@conform-to/zod";
 import { useActionState } from "react";
 import { useForm } from "@conform-to/react";
 import { registerUser } from "../actions";
-import { requireUser } from "../utils/hooks";
 
-export default async function Register() {
+export default function Register() {
 
     const [lastResult, action] = useActionState(registerUser, undefined);
     const [form, fields] = useForm({
         lastResult,
-        onValidate({formData}) {
-            return parseWithZod(formData,{
+        onValidate({ formData }) {
+            return parseWithZod(formData, {
                 schema: registerSchema,
             })
-        }, 
+        },
         shouldValidate: "onBlur", //validates when the users clicks out of the input field
         shouldRevalidate: "onInput", //revalidates when the user types in the input field
     });
@@ -95,8 +96,6 @@ export default async function Register() {
         window.location.href = `/auth/login?connection=${provider}&screen_hint=signup`;
     };
 
-      const session = await requireUser();
-    
 
     return (
         <AuthCard
