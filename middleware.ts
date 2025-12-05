@@ -5,7 +5,6 @@ import { auth0 } from "./lib/auth0";
 // Define protected routes that require authentication
 const protectedRoutes = [
   "/profile",
-  "/dashboard",
   "/listings/create",
   "/listings/edit",
   "/messages",

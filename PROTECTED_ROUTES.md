@@ -6,8 +6,7 @@ This document explains how route protection works .
 
 The following routes require users to be authenticated before accessing them:
 
-- `/profile` - User profile page
-- `/dashboard` - User dashboard
+- `/profile` - User profile page (displays all user data, stats, and listings)
 - `/listings/create` - Create new listing
 - `/listings/edit/*` - Edit listings
 - `/messages` - Direct messages
@@ -56,7 +55,6 @@ When redirected to login, the original URL is preserved:
 ```typescript
 const protectedRoutes = [
   "/profile",
-  "/dashboard",
   "/your-new-route", // Add here
 ];
 ```
