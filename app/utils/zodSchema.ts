@@ -19,6 +19,12 @@ export const registerSchema = z.object({
         .min(3, { message: "Username must be at least 3 characters" })
         .max(30, { message: "Username can not be more than 30 characters" })
         .regex(/^[a-zA-Z0-9_]+$/, { message: "Username can only contain letters, numbers, and underscores" }),
+    university: z
+        .string()
+        .min(2, { message: "University is required" }),
+    campus: z
+        .string()
+        .min(2, { message: "Campus is required" }),
     confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

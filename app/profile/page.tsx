@@ -115,7 +115,7 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        {/* Profile Card with enhanced design */}
+        {/* Profile Card */}
         <Card className="p-6 mb-8 shadow-md border-2 hover:shadow-lg transition-shadow">
           <div className="flex items-start gap-6">
             <div className="relative">

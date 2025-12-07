@@ -1,4 +1,4 @@
-"use client";
+"use server";
 
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
@@ -32,6 +32,15 @@ export async function registerUser(prevState: any, formData: FormData) {
             name: submission.value.fullName as string,
             username: submission.value.username as string,
             email: submission.value.email as string,
+            university: {
+                connect: { id: Number(submission.value.university) }
+            },
+            campus: {
+                connect: { id: Number(submission.value.campus) }
+            },
+            // the 2 'connect' lines tell Prisma:
+            // “Find the university with this ID, and connect the user to it.”
+            
             //onboardingComplete: true,
         }
     });
