@@ -23,6 +23,11 @@ async function getUserdata(auth0Id: string) {
       avatarUrl: true,
       bio: true,
       createdAt: true,
+      university: {
+        select: {
+          name: true,
+        }
+      },
       campus: {
         select: {
           name: true,

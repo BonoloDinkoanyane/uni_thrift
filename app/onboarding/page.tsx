@@ -2,17 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import AuthCard from "@/components/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { registerSchema } from "../utils/zodSchema";
 import { parseWithZod } from "@conform-to/zod";
 import { useActionState } from "react";
 import { useForm } from "@conform-to/react";
 import { registerUser } from "../actions";
+import { Card, CardTitle, CardDescription, CardAction, CardContent } from "@/components/ui/card";
 
 export default function Register() {
 
@@ -27,7 +26,7 @@ export default function Register() {
         shouldValidate: "onBlur", //validates when the users clicks out of the input field
         shouldRevalidate: "onInput", //revalidates when the user types in the input field
     });
-    const router = useRouter();
+
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
@@ -35,16 +34,9 @@ export default function Register() {
         password: "",
         confirmPassword: "",
     });
+    
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
     const [agreedToTerms, setAgreedToTerms] = useState(false);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
 
     const getPasswordStrength = (password: string) => {
         if (password.length === 0) return { strength: 0, label: "", color: "" };
@@ -56,53 +48,18 @@ export default function Register() {
 
     const passwordStrength = getPasswordStrength(formData.password);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
-
-        // Validation
-        if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-            setError("Please fill in all fields");
-            return;
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match");
-            return;
-        }
-
-        if (formData.password.length < 8) {
-            setError("Password must be at least 8 characters long");
-            return;
-        }
-
-        if (!agreedToTerms) {
-            setError("Please agree to the terms and conditions");
-            return;
-        }
-
-        setIsLoading(true);
-
-        // Redirect to Auth0 signup with metadata via middleware
-        const params = new URLSearchParams({
-            screen_hint: "signup",
-            login_hint: formData.email,
-        });
-
-        window.location.href = `/auth/login?${params.toString()}`;
-    };
-
-    const handleSocialSignup = (provider: string) => {
-        window.location.href = `/auth/login?connection=${provider}&screen_hint=signup`;
-    };
-
-
     return (
         <AuthCard
             title="Join UniThrift"
             subtitle="Create your account to start trading"
         >
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form 
+             action = {action}
+             onSubmit={form.onSubmit} 
+             className="space-y-4"
+             id = {form.id}
+             noValidate
+             >
                 {/* Full Name Field */}
                 <div className="space-y-2">
                     <Label htmlFor="fullName" className="text-sm font-medium">
@@ -113,8 +70,6 @@ export default function Register() {
                         name="fullName"
                         type="text"
                         placeholder="John Doe"
-                        value={formData.fullName}
-                        onChange={handleChange}
                         className="transition-all duration-200 focus:scale-[1.01]"
                         required
                     />
@@ -130,8 +85,6 @@ export default function Register() {
                         name="email"
                         type="email"
                         placeholder="example@university.ac.za"
-                        value={formData.email}
-                        onChange={handleChange}
                         className="transition-all duration-200 focus:scale-[1.01]"
                         required
                     />
@@ -147,8 +100,6 @@ export default function Register() {
                         name="password"
                         type="password"
                         placeholder="••••••••"
-                        value={formData.password}
-                        onChange={handleChange}
                         className="transition-all duration-200 focus:scale-[1.01]"
                         required
                     />
@@ -185,8 +136,6 @@ export default function Register() {
                         name="confirmPassword"
                         type="password"
                         placeholder="••••••••"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
                         className="transition-all duration-200 focus:scale-[1.01]"
                         required
                     />
@@ -213,13 +162,6 @@ export default function Register() {
                     </Label>
                 </div>
 
-                {/* Error Message */}
-                {error && (
-                    <div className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-md p-3">
-                        {error}
-                    </div>
-                )}
-
                 {/* Submit Button */}
                 <Button
                     type="submit"
@@ -235,14 +177,6 @@ export default function Register() {
                         "Create Account"
                     )}
                 </Button>
-
-                {/* Divider */}
-                <div className="relative my-6">
-                    <Separator />
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                        Or sign up with
-                    </span>
-                </div>
 
                 {/* Sign In Link */}
                 <div className="text-center pt-4">

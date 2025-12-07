@@ -13,7 +13,7 @@ export async function registerUser(prevState: any, formData: FormData) {
     // session is guaranteed to exist here because requireUser redirects if not
     const auth0Id = session!.user.sub;
     if (!auth0Id) {
-        throw new Error("User not authenticated");
+        throw new Error("Account does not exist");
     }
 
     const submission = parseWithZod(formData, {
@@ -40,7 +40,7 @@ export async function registerUser(prevState: any, formData: FormData) {
             },
             // the 2 'connect' lines tell Prisma:
             // “Find the university with this ID, and connect the user to it.”
-            
+
             //onboardingComplete: true,
         }
     });
