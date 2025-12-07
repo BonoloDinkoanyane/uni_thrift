@@ -14,4 +14,4 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // Export the singleton instance so other files can import it
-export const db = globalForPrisma.prisma || prisma;
+export const db = globalForPrisma.prisma || prisma; 

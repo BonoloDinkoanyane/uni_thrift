@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { Card, CardTitle, CardDescription, CardAction, CardContent } from "@/components/ui/card";
 
 interface AuthCardProps {
     children: ReactNode;
@@ -20,20 +21,22 @@ export default function AuthCard({ children, title, subtitle }: AuthCardProps) {
 
             {/* Main card */}
             <div className="relative w-full max-w-md">
-                <div className="backdrop-blur-xl bg-card/80 border border-border/50 rounded-2xl shadow-2xl p-8 animate-fade-in-up">
+                <Card className="backdrop-blur-xl bg-card/80 border border-border/50 rounded-2xl shadow-2xl p-8 animate-fade-in-up">
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+                        <CardTitle className="text-3xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
                             {title}
-                        </h1>
+                        </CardTitle>
                         {subtitle && (
-                            <p className="text-muted-foreground text-sm">{subtitle}</p>
+                            <CardDescription className="text-muted-foreground text-sm">
+                                {subtitle}
+                            </CardDescription>
                         )}
                     </div>
 
                     {/* Content */}
-                    {children}
-                </div>
+                    <CardContent>{children}</CardContent>
+                </Card>
             </div>
         </div>
     );

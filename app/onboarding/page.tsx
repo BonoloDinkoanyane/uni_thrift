@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import AuthCard from "@/components/AuthCard";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { useActionState } from "react";
 import { useForm } from "@conform-to/react";
 import { registerUser } from "../actions";
 import { Card, CardTitle, CardDescription, CardAction, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getUniversities, getCampuses } from "../utils/uniSelector";
 
 export default function Register() {
 
@@ -48,11 +50,34 @@ export default function Register() {
 
     const passwordStrength = getPasswordStrength(formData.password);
 
+    const [universities, setUniversities] = useState<{ id: number; name: string }[]>([]);
+    const [campuses, setCampuses] = useState<{ id: number; name: string }[]>([]);
+    const [selectedUniversity, setSelectedUniversity] = useState("");
+    const [selectedCampus, setSelectedCampus] = useState("");
+
+    // loads the universities on mount
+    useEffect(() => {
+        getUniversities().then(setUniversities);
+    }, []);
+
+    // loads campuses tied to the selected universitites id
+    useEffect(() => {
+        if (!selectedUniversity) {
+        setCampuses([]);
+        setSelectedCampus(""); // reset campus
+        return;
+        }
+        getCampuses(Number(selectedUniversity)).then(setCampuses);
+    }, [selectedUniversity]);
+
+
+
     return (
         <AuthCard
             title="Join UniThrift"
             subtitle="Create your account to start trading"
         >
+            <CardContent>
             <form 
              action = {action}
              onSubmit={form.onSubmit} 
@@ -60,15 +85,30 @@ export default function Register() {
              id = {form.id}
              noValidate
              >
-                {/* Full Name Field */}
+                {/* Name Field */}
                 <div className="space-y-2">
                     <Label htmlFor="fullName" className="text-sm font-medium">
                         Full Name
                     </Label>
                     <Input
-                        id="fullName"
-                        name="fullName"
-                        type="text"
+                        key={fields.fullName.key}
+                        name={fields.fullName.name}
+                        defaultValue={fields.fullName.initialValue}
+                        placeholder="John Doe"
+                        className="transition-all duration-200 focus:scale-[1.01]"
+                        required
+                    />
+                </div>
+
+                {/* username Field */}
+                <div className="space-y-2">
+                    <Label htmlFor="username" className="text-sm font-medium">
+                        Username
+                    </Label>
+                    <Input
+                        key={fields.username.key}
+                        name={fields.username.name}
+                        defaultValue={fields.username.initialValue}
                         placeholder="John Doe"
                         className="transition-all duration-200 focus:scale-[1.01]"
                         required
@@ -81,13 +121,58 @@ export default function Register() {
                         University Email
                     </Label>
                     <Input
-                        id="email"
-                        name="email"
-                        type="email"
+                        key={fields.email.key} 
+                        name={fields.email.name}
+                        defaultValue={fields.email.initialValue}
                         placeholder="example@university.ac.za"
                         className="transition-all duration-200 focus:scale-[1.01]"
                         required
                     />
+                </div>
+
+                {/* Uni Field and campus fields */}
+                <div className="flex gap-4">
+                    {/* University Select */}
+                    <div className="space-y-2">
+                        <Label htmlFor="university" className="text-sm font-medium">
+                            University
+                        </Label>
+                        <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
+                            <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select University" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            {universities.map((uni) => (
+                                <SelectItem key={uni.id} value={uni.id.toString()}>
+                                {uni.name}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Campus Select */}
+                    <div className="space-y-2">
+                        <Label htmlFor="campus" className="text-sm font-medium">
+                            Campus
+                        </Label>
+                        <Select
+                            value={selectedCampus}
+                            onValueChange={setSelectedCampus}
+                            disabled={!selectedUniversity}
+                         >
+                            <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Campus" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            {campuses.map((campus) => (
+                                <SelectItem key={campus.id} value={campus.id.toString()}>
+                                {campus.name}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
 
                 {/* Password Field */}
@@ -191,6 +276,7 @@ export default function Register() {
                     </p>
                 </div>
             </form>
+            </CardContent>
         </AuthCard>
     );
 }
