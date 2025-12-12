@@ -1,4 +1,4 @@
-import Footer from "../components/Footer";
+import Footer from "@/app/components/Footer"
 import { Cookie } from "lucide-react";
 
 export default function CookiesPage() {

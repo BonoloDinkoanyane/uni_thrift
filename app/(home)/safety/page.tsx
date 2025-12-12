@@ -1,4 +1,4 @@
-import Footer from "../components/Footer";
+import Footer from "@/app/components/Footer"
 import { Shield, MapPin, Users, Eye, Lock, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
 export default function SafetyPage() {

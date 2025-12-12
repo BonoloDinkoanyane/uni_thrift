@@ -1,4 +1,4 @@
-import Footer from "../components/Footer";
+import Footer from "@/app/components/Footer"
 import { Mail, MessageCircle, HelpCircle, AlertTriangle, FileText, Send } from "lucide-react";
 
 export default function ContactPage() {

@@ -1,5 +1,5 @@
-import FAQCategory from "../components/FAQCategory";
-import Footer from "../components/Footer";
+import FAQCategory from "@/app/components/FAQCategory";
+import Footer from "@/app/components/Footer"
 
 export default function FAQPage() {
     return (

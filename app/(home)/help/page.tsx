@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Footer from "../components/Footer";
+import Footer from "@/app/components/Footer"
 import { MessageCircle, Book, Shield, CreditCard, Package, Users } from "lucide-react";
 
 export default function HelpCenterPage() {
@@ -76,7 +76,7 @@ export default function HelpCenterPage() {
         <div className="min-h-screen bg-background">
             {/* Hero Header */}
             <section className="relative pt-32 pb-16 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
                 <div className="absolute top-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl -z-10" />
 
                 <div className="container mx-auto px-4 text-center">
@@ -186,7 +186,7 @@ export default function HelpCenterPage() {
             {/* Still Need Help */}
             <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <div className="max-w-2xl mx-auto text-center bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 border-2 border-primary/20">
+                    <div className="max-w-2xl mx-auto text-center bg-linear-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 border-2 border-primary/20">
                         <h2 className="text-3xl font-bold mb-4">Still need help?</h2>
                         <p className="text-muted-foreground mb-6">
                             Can't find what you're looking for? Our support team is here to help you.

@@ -13,7 +13,7 @@ import { useForm } from "@conform-to/react";
 import { registerUser } from "../actions";
 import { CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getUniversities, getCampuses } from "../utils/uniSelector";
+import { getCampuses } from "../utils/uniSelector";
 import { EyeOff, Eye } from 'lucide-react';
 
 export default function Register({ universities }: { universities: { id: number; name: string }[] }) {
@@ -165,7 +165,7 @@ export default function Register({ universities }: { universities: { id: number;
                 <div>
                     <div className="space-y-2">
                         <Label className="text-sm font-medium">
-                            Campus
+                            Campus (Optional)
                         </Label>
                         <Select
                             value={selectedCampus}
