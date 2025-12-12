@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Brand */}
                     <div>
-                        <h3 className="text-2xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
+                        <h3 className="text-2xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
                             UniThrift
                         </h3>
                         <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -97,18 +97,18 @@ export default function Footer() {
                         <h4 className="font-bold text-lg mb-4">Get in Touch</h4>
                         <ul className="space-y-3">
                             <li className="flex items-start gap-3 text-muted-foreground">
-                                <Mail className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                                <Mail className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                                 <a href="mailto:support@unithrift.com" className="hover:text-primary transition-colors">
                                     support@unithrift.com
                                 </a>
                             </li>
                             <li className="flex items-start gap-3 text-muted-foreground">
-                                <Phone className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                                <Phone className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                                 <span>1-800-UNI-SHOP</span>
                             </li>
                             <li className="flex items-start gap-3 text-muted-foreground">
-                                <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                                <span>Available on 250+ campuses nationwide</span>
+                                <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                                <span>Available across 26+ universities nationwide</span>
                             </li>
                         </ul>
                     </div>

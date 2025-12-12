@@ -37,7 +37,7 @@ export default function ContactPage() {
         <div className="min-h-screen bg-background">
             {/* Hero Header */}
             <section className="relative pt-32 pb-16 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
                 <div className="absolute top-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl -z-10" />
 
                 <div className="container mx-auto px-4 text-center">
@@ -63,7 +63,7 @@ export default function ContactPage() {
                                     className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-all hover:border-primary"
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
                                             <method.icon className="w-6 h-6 text-primary" />
                                         </div>
                                         <div className="flex-1">
@@ -118,7 +118,7 @@ export default function ContactPage() {
                                             name="email"
                                             required
                                             className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary outline-none transition-all"
-                                            placeholder="john.doe@university.edu"
+                                            placeholder="john.doe@university.ac.za"
                                         />
                                     </div>
                                 </div>
@@ -238,7 +238,7 @@ export default function ContactPage() {
                         </div>
 
                         {/* Response Time Info */}
-                        <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 rounded-2xl p-8 text-center">
+                        <div className="bg-linear-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 rounded-2xl p-8 text-center">
                             <h3 className="text-2xl font-bold mb-3">We're Here to Help!</h3>
                             <p className="text-muted-foreground mb-4">
                                 Our support team typically responds within 24-48 hours during business days.

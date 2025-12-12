@@ -6,7 +6,7 @@ export default function SafetyPage() {
         <div className="min-h-screen bg-background">
             {/* Hero Header */}
             <section className="relative pt-32 pb-16 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
                 <div className="absolute top-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl -z-10" />
 
                 <div className="container mx-auto px-4 text-center">
@@ -40,29 +40,28 @@ export default function SafetyPage() {
 
                             <div className="space-y-4">
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Choose Public Locations</h3>
                                         <p className="text-muted-foreground">
-                                            Always meet in well-lit, busy public areas on campus such as the student union,
-                                            library lobby, cafeteria, or main campus quad during daylight hours.
+                                            Always meet in well-lit, busy public areas on campus during daylight hours.
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Bring a Friend</h3>
                                         <p className="text-muted-foreground">
-                                            Consider bringing a friend or roommate along, especially for high-value items.
-                                            There's safety in numbers.
+                                            Consider bringing a friend or roommate along, especially for high-value items. Remember,
+                                            there is safety in numbers.
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Stay in Public View</h3>
                                         <p className="text-muted-foreground">
@@ -73,18 +72,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                                    <div>
-                                        <h3 className="font-semibold mb-1">Use Campus Resources</h3>
-                                        <p className="text-muted-foreground">
-                                            Some campuses have designated "safe exchange zones" monitored by campus security.
-                                            Check if your university offers this service.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
+                                    <XCircle className="w-6 h-6 text-red-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Avoid Private Residences</h3>
                                         <p className="text-muted-foreground">
@@ -107,7 +95,7 @@ export default function SafetyPage() {
 
                             <div className="space-y-4">
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Trust Your Instincts</h3>
                                         <p className="text-muted-foreground">
@@ -118,7 +106,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Keep Someone Informed</h3>
                                         <p className="text-muted-foreground">
@@ -129,7 +117,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Stay Alert</h3>
                                         <p className="text-muted-foreground">
@@ -140,7 +128,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Meet During Daylight</h3>
                                         <p className="text-muted-foreground">
@@ -163,7 +151,7 @@ export default function SafetyPage() {
 
                             <div className="space-y-4">
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Inspect Before Paying</h3>
                                         <p className="text-muted-foreground">
@@ -174,7 +162,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Use Secure Payment Methods</h3>
                                         <p className="text-muted-foreground">
@@ -185,7 +173,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Verify Item Details</h3>
                                         <p className="text-muted-foreground">
@@ -196,7 +184,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Get Everything in Writing</h3>
                                         <p className="text-muted-foreground">
@@ -207,7 +195,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
+                                    <XCircle className="w-6 h-6 text-red-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Never Send Money in Advance</h3>
                                         <p className="text-muted-foreground">
@@ -230,7 +218,7 @@ export default function SafetyPage() {
 
                             <div className="space-y-4">
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Protect Personal Information</h3>
                                         <p className="text-muted-foreground">
@@ -241,7 +229,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Use Platform Messaging</h3>
                                         <p className="text-muted-foreground">
@@ -252,7 +240,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Check User Profiles</h3>
                                         <p className="text-muted-foreground">
@@ -263,7 +251,7 @@ export default function SafetyPage() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                                    <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                                     <div>
                                         <h3 className="font-semibold mb-1">Secure Your Account</h3>
                                         <p className="text-muted-foreground">
@@ -309,7 +297,7 @@ export default function SafetyPage() {
                                     </li>
                                     <li className="flex gap-2">
                                         <span className="text-red-500">•</span>
-                                        <span>Requests for wire transfers, gift cards, or cryptocurrency</span>
+                                        <span>Requests for bank transfers, gift cards, or cryptocurrency</span>
                                     </li>
                                     <li className="flex gap-2">
                                         <span className="text-red-500">•</span>
@@ -330,23 +318,23 @@ export default function SafetyPage() {
                                 <h3 className="font-semibold mb-3">If You Suspect a Scam:</h3>
                                 <ul className="space-y-2 text-muted-foreground">
                                     <li className="flex gap-2">
-                                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                        <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                                         <span>Stop all communication with the suspicious user</span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                        <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                                         <span>Do not send any money or personal information</span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                        <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                                         <span>Report the user and listing immediately through our platform</span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                        <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                                         <span>Contact campus security if you feel threatened</span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                        <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                                         <span>Preserve all messages and evidence of the scam attempt</span>
                                     </li>
                                 </ul>
@@ -354,7 +342,7 @@ export default function SafetyPage() {
                         </div>
 
                         {/* Emergency Contacts */}
-                        <div className="mb-12 bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 rounded-2xl p-8">
+                        <div className="mb-12 bg-linear-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 rounded-2xl p-8">
                             <h2 className="text-3xl font-bold mb-4 text-center">Emergency Contacts</h2>
                             <p className="text-muted-foreground text-center mb-6">
                                 If you feel unsafe or experience an emergency:
@@ -369,7 +357,7 @@ export default function SafetyPage() {
                                 <div className="bg-background rounded-xl p-4 text-center">
                                     <h3 className="font-bold mb-2">Emergency Services</h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Call local emergency services (911 or equivalent)
+                                        Call local emergency services 
                                     </p>
                                 </div>
                                 <div className="bg-background rounded-xl p-4 text-center">
@@ -383,10 +371,10 @@ export default function SafetyPage() {
 
                         {/* Final Message */}
                         <div className="text-center p-6 bg-card border border-border rounded-2xl">
-                            <h3 className="text-2xl font-bold mb-3">Remember: Your Safety Comes First</h3>
+                            <h3 className="text-2xl font-bold mb-3">Your Safety Comes First</h3>
                             <p className="text-muted-foreground mb-4">
                                 No transaction is worth compromising your safety. When in doubt, walk away.
-                                We're here to support you in creating a safe marketplace community.
+                                We are here to support you in creating a safe marketplace community.
                             </p>
                             <p className="text-sm text-muted-foreground">
                                 Have questions or concerns? <a href="/contact" className="text-primary hover:underline font-semibold">Contact our support team</a>

@@ -6,7 +6,7 @@ export default function CookiesPage() {
         <div className="min-h-screen bg-background">
             {/* Hero Header */}
             <section className="relative pt-32 pb-16 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-secondary/10 to-accent/10 -z-10" />
                 <div className="absolute top-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl -z-10" />
 
                 <div className="container mx-auto px-4 text-center">
@@ -35,7 +35,7 @@ export default function CookiesPage() {
                             <p className="text-muted-foreground">
                                 Cookies are small text files that are placed on your device when you visit a website.
                                 They help websites remember information about your visit, making your experience more
-                                personalized and efficient. This Cookie Policy explains how UniThrift uses cookies
+                                personalised and efficient. This Cookie Policy explains how UniThrift uses cookies
                                 and similar technologies.
                             </p>
                         </div>
@@ -50,7 +50,7 @@ export default function CookiesPage() {
                                 <li>Keep you signed in to your account</li>
                                 <li>Remember your preferences and settings</li>
                                 <li>Understand how you use our platform to improve your experience</li>
-                                <li>Provide personalized content and recommendations</li>
+                                <li>Provide personalised content and recommendations</li>
                                 <li>Ensure the security and integrity of our service</li>
                                 <li>Analyze platform performance and usage patterns</li>
                             </ul>
@@ -230,16 +230,16 @@ export default function CookiesPage() {
                             </p>
                             <div className="space-y-4">
                                 <div className="flex gap-3">
-                                    <span className="text-red-500 text-xl">⚠️</span>
                                     <div>
-                                        <p className="font-semibold mb-1">Essential Features May Not Work</p>
+                                        <ul className="font-semibold mb-1">
+                                            <li>Essential Features May Not Work</li>
+                                        </ul>
                                         <p className="text-sm text-muted-foreground">
                                             You may not be able to log in or access certain parts of the platform
                                         </p>
                                     </div>
                                 </div>
                                 <div className="flex gap-3">
-                                    <span className="text-yellow-500 text-xl">⚠️</span>
                                     <div>
                                         <p className="font-semibold mb-1">Preferences Won't Be Saved</p>
                                         <p className="text-sm text-muted-foreground">
@@ -248,7 +248,6 @@ export default function CookiesPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-3">
-                                    <span className="text-blue-500 text-xl">ℹ️</span>
                                     <div>
                                         <p className="font-semibold mb-1">Repeated Actions Required</p>
                                         <p className="text-sm text-muted-foreground">
@@ -260,7 +259,7 @@ export default function CookiesPage() {
                         </div>
 
                         {/* Other Tracking Technologies */}
-                        <div className="mb-12">
+                        {/* <div className="mb-12">
                             <h2 className="text-3xl font-bold mb-4">Other Tracking Technologies</h2>
                             <p className="text-muted-foreground mb-4">
                                 In addition to cookies, we may use other tracking technologies:
@@ -282,7 +281,7 @@ export default function CookiesPage() {
                             <p className="text-muted-foreground mb-4">
                                 Similar to local storage but data is cleared when you close your browser tab.
                             </p>
-                        </div>
+                        </div> */}
 
                         {/* Updates to Cookie Policy */}
                         <div className="mb-12">
