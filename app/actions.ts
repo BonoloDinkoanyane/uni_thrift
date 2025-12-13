@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
 import { registerSchema } from "./utils/zodSchema";
+import z from "zod";
 
 
 export async function registerUser(prevState: any, formData: FormData) {
@@ -42,4 +43,31 @@ export async function registerUser(prevState: any, formData: FormData) {
 
     //redirect to the browse page after successful onboarding
     return redirect("/browse");
+}
+
+export async function signIn(){
+
+}
+
+export async function signUp(unsafeData: z.infer<typeof registerSchema>) {
+
+    const { success, data } = registerSchema.safeParse(unsafeData);
+
+    if (!success) {
+        return "Unable to create account";
+    }
+
+    const existingUser = await db.user.findUnique({
+        where: {
+            username: data.username,
+            email: data.email,
+        },
+    });
+
+    if (existingUser) {
+        return "Account already exists for this username/email";
+    }
+
+    redirect("/")
+    
 }

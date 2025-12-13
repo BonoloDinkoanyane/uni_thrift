@@ -4,7 +4,7 @@ import { auth } from "@/app/utils/auth";
 //these are the routes that require authentication
 // For example, protecting all routes under /dashboard
 // matcher: ["/dashboard/:path*"],
-const protectedRoutes = ['/profile', '/protected-route-2'];
+const protectedRoutes = ['/profile/:path*', '/protected-route-2'];
 
 export default async function middleware(req: NextRequest) {
 
