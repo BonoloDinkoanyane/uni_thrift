@@ -55,6 +55,7 @@ model User {
   campus          Campus?        @relation(fields: [campusId], references: [id])
 
   isVerified      Boolean        @default(false)
+  isBanned        Boolean        @default(false)  // <-- banned flag
 
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
@@ -105,6 +106,7 @@ model Listing {
   condition     ProductCondition
   status        ListingStatus @default(ACTIVE)
   isNegotiable  Boolean       @default(true)
+  isDeleted     Boolean       @default(false)  // <-- soft delete flag
 
   campus   Campus?  @relation(fields: [campusId], references: [id])
   campusId Int?

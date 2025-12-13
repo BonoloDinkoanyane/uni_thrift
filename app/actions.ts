@@ -83,7 +83,11 @@ export async function signUp(data: unknown) {
                 salt,
             },
         });
-        
+
+        if (data == null){
+            return "Unable to create account";
+        }
+
     } catch (error) {
         return "Unable to create account";
     }
