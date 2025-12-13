@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-export function hashPassword(password: string, salt: string){
+export function hashPassword(password: string, salt: string) : Promise<string> {
 
     return new Promise ((reslove, reject ) => {
 
@@ -9,9 +9,15 @@ export function hashPassword(password: string, salt: string){
             if (err) reject (err);
 
             //if no error, we resolve the promise with the hashed password in hex format
+            //normalize() ensures consistent string representation
             reslove (hash.toString("hex").normalize());
         
         });
     })
 
+}
+
+export function generateSalt(){
+    //16 bytes is essentially 16 random characters
+    return crypto.randomBytes(16).toString("hex").normalize();
 }

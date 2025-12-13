@@ -3,8 +3,9 @@
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { registerSchema } from "./utils/zodSchema";
+import { registerSchema, signUpSchema } from "./utils/zodSchema";
 import z from "zod";
+import { generateSalt, hashPassword } from "./utils/passwordHasher";
 
 
 export async function registerUser(prevState: any, formData: FormData) {
@@ -49,25 +50,44 @@ export async function signIn(){
 
 }
 
-export async function signUp(unsafeData: z.infer<typeof registerSchema>) {
+export async function signUp(data: unknown) {
 
-    const { success, data } = registerSchema.safeParse(unsafeData);
+    const parsed = signUpSchema.safeParse(data);
 
-    if (!success) {
-        return "Unable to create account";
+    if (!parsed.success) {
+        return { error: "Invalid input" };
     }
 
-    const existingUser = await db.user.findUnique({
+    // always use `parsed.data`, not `data` directly
+    const { username, email, password } = parsed.data;
+
+    const existingUser = await db.user.findFirst({
         where: {
-            username: data.username,
-            email: data.email,
+            OR: [{ username }, { email }],
         },
     });
 
-    if (existingUser) {
-        return "Account already exists for this username/email";
+    if (existingUser != null) {
+        return "Account already exists";
     }
 
+    try {
+        const salt = generateSalt();
+        const passwordHash = await hashPassword(password, salt);
+
+        await db.user.create({
+            data: {
+                username,
+                email,
+                passwordHash,
+                salt,
+            },
+        });
+        
+    } catch (error) {
+        return "Unable to create account";
+    }
+    
     redirect("/")
     
 }
