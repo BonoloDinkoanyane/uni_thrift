@@ -1,6 +1,6 @@
 import { z } from "zod";
 import crypto from "crypto";
-import { redisClient } from "../redis/redis";
+import { redisClient } from "../../redis/redis";
 
 //the schema stores the shape of the user session object
 const sessionSchema = z.object({

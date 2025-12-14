@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'; 
-import { auth } from "@/app/utils/auth";
+import { auth } from "@/app/utils/Auth/auth";
 
 //these are the routes that require authentication
 // For example, protecting all routes under /dashboard

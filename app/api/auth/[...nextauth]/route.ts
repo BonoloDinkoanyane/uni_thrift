@@ -1,4 +1,4 @@
-import {handlers} from "@/app/utils/auth";
+import {handlers} from "@/app/utils/Auth/auth";
 
 
 //this route handles sign in and sign out requests, as well as callback requests

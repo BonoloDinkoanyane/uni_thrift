@@ -15,7 +15,6 @@ export async function getCookiesAdapter(): Promise<Cookies> {
     // Return an object that implements our Cookies interface
     return {
         /**
-         * Set a cookie
          * Translates our generic options format to Next.js's specific format
          */
         set: (key, value, options) => {
@@ -30,7 +29,6 @@ export async function getCookiesAdapter(): Promise<Cookies> {
         },
         
         /**
-         * Get a cookie
          * Transforms Next.js's RequestCookie type to our simpler format
          */
         get: (key) => {
@@ -41,8 +39,7 @@ export async function getCookiesAdapter(): Promise<Cookies> {
         },
         
         /**
-         * Delete a cookie
-         * Next.js's delete method has complex overloads, we simplify to single signature
+         * Next.js's delete method has complex overloads, so we simplify it to a single signature
          */
         delete: (key) => {
             cookieStore.delete(key);
@@ -50,9 +47,8 @@ export async function getCookiesAdapter(): Promise<Cookies> {
     };
 }
 
-// ## Why This Adapter Is CRITICAL
+// Why This Adapter Is CRITICAL
 
-// ### 1. **Solves Type Incompatibility** 
-// Without the adapter, TypeScript gives you this error:
-
+// Solves Type Incompatibility
+// Without the adapter, TypeScript gives this error:
 // Argument of type 'ReadonlyRequestCookies' is not assignable to parameter of type 'Cookies'

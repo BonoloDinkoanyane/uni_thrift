@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
 import { registerSchema, signUpSchema } from "./utils/zodSchema";
 import z from "zod";
-import { generateSalt, hashPassword } from "./utils/passwordHasher";
+import { generateSalt, hashPassword } from "./utils/Auth/passwordHasher";
 import { create } from "domain";
-import { createSession, userSession } from "./utils/session";
+import { createSession, userSession } from "./utils/sessionManagement/session";
 import { cookies } from "next/headers";
+import { getCookiesAdapter } from "./utils/sessionManagement/cookiesAdapter";
 
 
 export async function registerUser(prevState: any, formData: FormData) {
@@ -93,9 +94,9 @@ export async function signUp(user: unknown) {
             },
         });
 
-        //verifies that the user creation has succeeded
+        //verifies that the user creation has succeeded by checking newUser is not null
         if (newUser == null){ 
-            return "Unable to create account";
+            return { error: "Unable to create account" };
         }
 
         // maps database user object to session format
@@ -111,11 +112,20 @@ export async function signUp(user: unknown) {
             updatedAt: newUser.updatedAt,
         };
 
-        //creates a session for the newly created user
-        await createSession(userSessionData, await cookies());
+        // obtains the cookies adapter - this bridges Next.js's cookie API to our custom Cookies interface
+        // the adapter translates between incompatible type signatures (method overloads, return types, option formats)
+        // specifically, it converts Next.js's complex cookie methods into our simplified interface
+        // this allows createSession() to remain framework-agnostic and work with any cookie implementation
+        const cookiesAdapter = await getCookiesAdapter();
+
+        // creates a session for the newly created user by:
+        // 1. generating a secure random session ID
+        // 2. storing the session data in Redis with expiration
+        // 3. setting a session cookie in the user's browser (via the adapter)
+        await createSession(userSessionData,cookiesAdapter);
     } catch (error) {
         //catches any errors during user creation or session creation
-        return "Unable to create account";
+        return { error: "Unable to create account" };
     }
     
     redirect("/")
