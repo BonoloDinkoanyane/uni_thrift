@@ -1,5 +1,6 @@
 import { z } from "zod";
 import crypto from "crypto";
+import { redisClient } from "../redis/redis";
 
 //the schema stores the shape of the user session object
 const sessionSchema = z.object({
@@ -29,15 +30,31 @@ export type Cookies = {
         sameSite?: "lax" | "strict" | "none";
     }) => void;
   get: (key: string) =>{ name: string; value: string } | undefined
-  delete: (key: string, options?: { path?: string }) => void;
+  delete: (key: string ) => void;
 };
+
+const SESSION_EXPIRATION_SECONDS = 60 * 60 * 24 * 7; // 1 week
+const COOKIE_SESSION_KEY= "sessionId"; //name of the cookie session to store
 
 //if i wanted to create a session cookie for a user solely using nextjs
 //i could directly use the cookies object from next.js
-export function createSession(user: userSession, cookies: Cookies){
+export async function createSession(user: userSession, cookies: Cookies){
 
     //creating a brand new generic session id to assign to the user
     //512 bytes because the session should be large and hard to guess
     const sessionId = crypto.randomBytes(512).toString("hex").normalize();
+    await redisClient.set(`session:${sessionId}`, sessionSchema.parse(user), { 
+        ex: SESSION_EXPIRATION_SECONDS // 1 week expiration
+    });
 
+    setCookie(sessionId, cookies)
+}
+
+function setCookie(sessionId: string, cookies: Pick<Cookies, "set">) {
+  cookies.set(COOKIE_SESSION_KEY, sessionId, {
+    secure: true, //makes sure it is always encrypted when it is sent over the network
+    httpOnly: true, //makes sure it is sent only over http(s) and the server, and not accessible via JS
+    sameSite: "lax", //allows us to access the cookie on the server even if the request comes from another site/redirect 
+    expires: Date.now() + SESSION_EXPIRATION_SECONDS * 1000,
+  })
 }

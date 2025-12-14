@@ -36,9 +36,9 @@ enum ProductCondition {
 }
 
 model User {
-  id              String         @id @default(cuid())
+  userId          String         @id @default(cuid())
   email           String         @unique
-  username        String?        @unique
+  username        String        @unique
   name            String?
   avatarUrl       String?
   bio             String?
@@ -111,7 +111,7 @@ model Listing {
   campus   Campus?  @relation(fields: [campusId], references: [id])
   campusId Int?
 
-  owner         User          @relation(fields: [ownerId], references: [id])
+  owner         User          @relation(fields: [ownerId], references: [userId])
   ownerId       String
 
   createdAt     DateTime      @default(now())
@@ -141,7 +141,7 @@ model Category {
 // FAVORITES
 model Favorite {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [userId])
   userId    String
   listing   Listing  @relation(fields: [listingId], references: [id])
   listingId String
@@ -158,10 +158,10 @@ model Order {
   amountPaid  Float?
   completedAt DateTime?
 
-  seller      User         @relation("UserOrders", fields: [sellerId], references: [id])
+  seller      User         @relation("UserOrders", fields: [sellerId], references: [userId])
   sellerId    String
 
-  buyer       User         @relation("UserPurchases", fields: [buyerId], references: [id])
+  buyer       User         @relation("UserPurchases", fields: [buyerId], references: [userId])
   buyerId     String
 
   review      Review?      // back relation to Review
@@ -179,10 +179,10 @@ model Review {
   rating       Int        // 1-5
   comment      String?
 
-  author       User       @relation("ReviewAuthor", fields: [authorId], references: [id])
+  author       User       @relation("ReviewAuthor", fields: [authorId], references: [userId])
   authorId     String
 
-  recipient    User       @relation("ReviewRecipient", fields: [recipientId], references: [id])
+  recipient    User       @relation("ReviewRecipient", fields: [recipientId], references: [userId])
   recipientId  String
 
   order        Order      @relation(fields: [orderId], references: [id])
@@ -199,10 +199,10 @@ model Message {
   content     String
   createdAt   DateTime   @default(now())
 
-  sender      User       @relation("MessageSender", fields: [senderId], references: [id])
+  sender      User       @relation("MessageSender", fields: [senderId], references: [userId])
   senderId    String
 
-  receiver    User       @relation("MessageReceiver", fields: [receiverId], references: [id])
+  receiver    User       @relation("MessageReceiver", fields: [receiverId], references: [userId])
   receiverId  String
 }
 
@@ -212,7 +212,7 @@ model Notification {
   body       String
   isRead     Boolean  @default(false)
 
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [userId])
   userId     String
 
   createdAt  DateTime @default(now())
@@ -232,7 +232,7 @@ model Account {
   id_token           String?
   session_state      String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -243,7 +243,7 @@ model Session {
   userId       String
   expires      DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model VerificationToken {
