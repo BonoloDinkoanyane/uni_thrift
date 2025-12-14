@@ -7,150 +7,194 @@ import { registerSchema, signInSchema, signUpSchema } from "./utils/zodSchema";
 import z from "zod";
 import { comparePasswords, generateSalt, hashPassword } from "./utils/Auth/passwordHasher";
 import { create } from "domain";
-import { createSession, userSession } from "./utils/sessionManagement/session";
+import { createSession, deleteUserSession, userSession } from "./utils/sessionManagement/session";
 import { cookies } from "next/headers";
 import { getCookiesAdapter } from "./utils/sessionManagement/cookiesAdapter";
 
 
 export async function registerUser(prevState: any, formData: FormData) {
+    try {
+        // session is guaranteed to exist here because requireUser redirects if not
+        const submission = parseWithZod(formData, {
+            schema: registerSchema,
+        });
 
-    // session is guaranteed to exist here because requireUser redirects if not
-
-
-    const submission = parseWithZod(formData, {
-        schema: registerSchema,
-    });
-
-    if (submission.status !== "success") {
-        return submission.reply();
-    }
-
-    const data = await db.user.update({
-        where: {
-            username: submission.value.username as string,
-        },
-        data: {
-            name: submission.value.fullName as string,
-            username: submission.value.username as string,
-            email: submission.value.email as string,
-            university: {
-                connect: { id: Number(submission.value.university) }
-            },
-            campus: {
-                connect: { id: Number(submission.value.campus) }
-            },
-            // the 2 'connect' lines tell Prisma:
-            // “Find the university with this ID, and connect the user to it.”
-
-            onboardingComplete: true, // Mark onboarding as complete
+        if (submission.status !== "success") {
+            return submission.reply();
         }
-    });
 
-    //redirect to the browse page after successful onboarding
-    return redirect("/browse");
+        // validate university and campus IDs are valid numbers
+        const universityId = Number(submission.value.university);
+        const campusId = Number(submission.value.campus);
+
+        if (isNaN(universityId) || isNaN(campusId)) {
+            return { error: "Invalid university or campus selection" };
+        }
+
+        // update user profile with onboarding information
+        const data = await db.user.update({
+            where: {
+                username: submission.value.username as string,
+            },
+            data: {
+                name: submission.value.fullName as string,
+                username: submission.value.username as string,
+                email: submission.value.email as string,
+                university: {
+                    connect: { id: universityId }
+                },
+                campus: {
+                    connect: { id: campusId }
+                },
+                // the 2 'connect' lines tell Prisma:
+                // "Find the university with this ID, and connect the user to it."
+                onboardingComplete: true, // Mark onboarding as complete
+            }
+        });
+
+        // redirect to the browse page after successful onboarding
+        return redirect("/browse");
+        
+    } catch (error) {
+        console.error("Registration error:", error);
+        
+        // handle specific Prisma errors
+        if (error instanceof Error) {
+            if (error.message.includes("Record to update not found")) {
+                return { error: "User not found" };
+            }
+            if (error.message.includes("Foreign key constraint")) {
+                return { error: "Invalid university or campus selection" };
+            }
+        }
+        
+        return { error: "Unable to complete registration. Please try again." };
+    }
 }
 
 export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
-    // validates the input data against the signup schema (username, email, password)
-    const { success, data } = signInSchema.safeParse(unsafeData)
 
-    if (!success) {
-        return { error: "Unable to log you in" };
+    try {
+        // validates the input data against the signup schema (username, email, password)
+        const { success, data } = signInSchema.safeParse(unsafeData)
+
+        if (!success) {
+            return { error: "Unable to log you in" };
+        }
+
+        // destructures, and extracts the validated fields 
+        const { identifier, password } = data;
+
+        const user = await db.user.findFirst({
+            where: {
+                OR: [
+                    { username: identifier },
+                    { email: identifier },
+                ],
+            },
+
+            select: { 
+                passwordHash: true, 
+                salt: true, 
+                userId: true, 
+                username: true, 
+                email: true, 
+                isVerified: true, 
+                isBanned: true, 
+                createdAt: true, 
+                updatedAt: true 
+            },
+        });
+
+        // generic error message to prevent username enumeration attacks
+        if (!user) {
+            return { error: "Invalid credentials" };
+        }
+
+        // check if user account is banned
+        if(user.isBanned){
+            return { error: "Your account has been banned. Please contact support." };
+        }
+
+        const isCorrectPassword = await comparePasswords({
+            password,
+            salt: user.salt,
+            hashedPassword: user.passwordHash,
+        });
+
+        if(!isCorrectPassword){
+            return { error: "Incorrect password" };
+        }
+
+        // maps database user object to session format
+        // extracts only the fields needed for the session (excludes passwordHash and salt)
+        const userSessionData: userSession = {
+            userId: user.userId,  // Map id to userId
+            username: user.username ?? "",
+            email: user.email,
+            isVerified: user.isVerified ?? false,
+            isBanned: user.isBanned ?? false,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
+
+        // obtains the cookies adapter - this bridges Next.js's cookie API to our custom Cookies interface
+        // the adapter translates between incompatible type signatures (method overloads, return types, option formats)
+        // specifically, it converts Next.js's complex cookie methods into our simplified interface
+        // this allows createSession() to remain framework-agnostic and work with any cookie implementation
+        const cookiesAdapter = await getCookiesAdapter();
+
+        // creates a session for the newly created user by:
+        // 1. generating a secure random session ID
+        // 2. storing the session data in Redis with expiration
+        // 3. setting a session cookie in the user's browser (via the adapter)
+        await createSession(userSessionData, cookiesAdapter); 
+
+    } catch (error) {
+
+        console.error("Sign in error:", error);
+        
+        // handle specific errors
+        if (error instanceof Error) {
+            if (error.message.includes("Redis")) {
+                return { error: "Session service unavailable. Please try again." };
+            }
+            if (error.message.includes("Cookie")) {
+                return { error: "Unable to create session. Please enable cookies." };
+            }
+        }
+
+        return { error: "Unable to sign in. Please try again." };
     }
 
-    // destructures, and extracts the validated fields 
-    const { identifier, password } = data;
-
-    const user = await db.user.findFirst({
-        where: {
-            OR: [
-                { username: identifier },
-                { email: identifier },
-            ],
-        },
-
-        select: { 
-            passwordHash: true, 
-            salt: true, 
-            userId: true, 
-            username: true, 
-            email: true, 
-            isVerified: true, 
-            isBanned: true, 
-            createdAt: true, 
-            updatedAt: true 
-        },
-    });
-
-    if (!user) {
-        return { error: "Invalid credentials" };
-    }
-
-    if(user.isBanned){
-        return { error: "Your account has been banned. Please contact support." };
-    }
-
-    const isCorrectPaasword = await comparePasswords({
-        password,
-        salt: user.salt,
-        hashedPassword: user.passwordHash,
-    });
-
-    if(!isCorrectPaasword){
-        return { error: "Incorrect password" };
-    }
-
-    // maps database user object to session format
-    // extracts only the fields needed for the session (excludes passwordHash and salt)
-    const userSessionData: userSession = {
-        userId: user.userId,  // Map id to userId
-        username: user.username ?? "",
-        email: user.email,
-        isVerified: user.isVerified ?? false,
-        isBanned: user.isBanned ?? false,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-    };
-
-    // obtains the cookies adapter - this bridges Next.js's cookie API to our custom Cookies interface
-    // the adapter translates between incompatible type signatures (method overloads, return types, option formats)
-    // specifically, it converts Next.js's complex cookie methods into our simplified interface
-    // this allows createSession() to remain framework-agnostic and work with any cookie implementation
-    const cookiesAdapter = await getCookiesAdapter();
-
-    // creates a session for the newly created user by:
-    // 1. generating a secure random session ID
-    // 2. storing the session data in Redis with expiration
-    // 3. setting a session cookie in the user's browser (via the adapter)
-    await createSession(userSessionData, cookiesAdapter); 
-
-    redirect("/")
+    //only redirects if sign in is successful
+    redirect("/");
 }
 
 export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
-    // validates the input data against the signup schema (username, email, password)
-    const { success, data } = signUpSchema.safeParse(unsafeData)
-
-    if (!success) {
-        return { error: "Unable to create account" };
-    }
-
-    // destructures, and extracts the validated fields 
-    const { username, email, password } = data;
-
-    // checks if a user with the same username or email already exists
-    const existingUser = await db.user.findFirst({
-        where: {
-            OR: [{ username }, { email }],
-        },
-    });
-
-    // prevents duplicate accounts
-    if (existingUser != null) {
-        return "Account already exists";
-    }
-
     try {
+        // validates the input data against the signup schema (username, email, password)
+        const { success, data } = signUpSchema.safeParse(unsafeData)
+
+        if (!success) {
+            return { error: "Unable to create account" };
+        }
+
+        // destructures, and extracts the validated fields 
+        const { username, email, password } = data;
+
+        // checks if a user with the same username or email already exists
+        const existingUser = await db.user.findFirst({
+            where: {
+                OR: [{ username }, { email }],
+            },
+        });
+
+        // prevents duplicate accounts
+        if (existingUser != null) {
+            return "Account already exists";
+        }
+
         // generates a random salt for password hashing
         const salt = generateSalt();
 
@@ -197,10 +241,48 @@ export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
         // 3. setting a session cookie in the user's browser (via the adapter)
         await createSession(userSessionData, cookiesAdapter);
     } catch (error) {
+
+        console.error("Sign up error:", error);
+
+        // handle specific database errors
+        if (error instanceof Error) {
+            // unique constraint violation 
+            if (error.message.includes("Unique constraint")) {
+                return { error: "Username or email already exists" };
+            }
+            // Redis connection error
+            if (error.message.includes("Redis")) {
+                return { error: "Session service unavailable. Please try again." };
+            }
+            // Cookie error
+            if (error.message.includes("Cookie")) {
+                return { error: "Unable to create session. Please enable cookies." };
+            }
+        }
         //catches any errors during user creation or session creation
-        return { error: "Unable to create account" };
+        return { error: "Unable to create account. Please try again." };
+    }
+
+    // redirect only happens if no errors occurred
+    redirect("/")
+}
+
+export async function logOut() {
+    try {
+        // obtains the cookies adapter to manage cookie deletion in a framework-agnostic way
+        const cookiesAdapter = await getCookiesAdapter();
+
+        // destroys the user's session by:
+        // 1. retrieving the session ID from the cookie
+        // 2. deleting the session data from Redis
+        // 3. removing the session cookie from the browser
+        await deleteUserSession(cookiesAdapter);
+    } catch (error) {
+        console.error("Logout error:", error);
+        // redirects even if the session deletion fails
+        // ensures the user can't get stuck
     }
     
-    redirect("/")
-    
+    // always redirect to home page after logout attempt
+    redirect("/");
 }

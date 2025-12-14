@@ -65,6 +65,21 @@ export function getUserFromSession(cookies: Pick<Cookies, "get">){
   return getUserSessionById(sessionId);
 }
 
+//function only selects the get and delete properties from the Cookies type
+export async function deleteUserSession(cookies: Pick<Cookies, "get" | "delete">) {
+  const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value;
+
+  if(sessionId == null){
+    return null;
+  }
+
+  //deletes the data from redis db for the particular sessionId
+  await redisClient.del(`session:${sessionId}`);
+
+  //deletes the cookie from the user's browser so it is not saved anywhere
+  cookies.delete(COOKIE_SESSION_KEY);
+}
+
 //accesses the storage (redis) to get the user session data by sessionId to get the user information 
 async function getUserSessionById( sessionId: string){
   const rawUser = await redisClient.get(`session:${sessionId}`);
