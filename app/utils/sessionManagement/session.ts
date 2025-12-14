@@ -38,7 +38,9 @@ const COOKIE_SESSION_KEY= "sessionId"; //name of the cookie session to store
 
 //if i wanted to create a session cookie for a user solely using nextjs
 //i could directly use the cookies object from next.js
-export async function createSession(user: userSession, cookies: Cookies){
+
+// function only selects the set property from the Cookies type
+export async function createSession(user: userSession, cookies: Pick<Cookies, "set">){
 
     //creating a brand new generic session id to assign to the user
     //512 bytes because the session should be large and hard to guess
@@ -50,6 +52,29 @@ export async function createSession(user: userSession, cookies: Cookies){
     setCookie(sessionId, cookies)
 }
 
+//function only selects the get property from the Cookies type
+export function getUserFromSession(cookies: Pick<Cookies, "get">){
+
+  //fetches the sessionId from the cookies
+  const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value;
+  if (sessionId == null) {
+    return null;
+  }
+
+  //returns the user session data associated with the sessionId
+  return getUserSessionById(sessionId);
+}
+
+//accesses the storage (redis) to get the user session data by sessionId to get the user information 
+async function getUserSessionById( sessionId: string){
+  const rawUser = await redisClient.get(`session:${sessionId}`);
+
+  const {success, data: user} = sessionSchema.safeParse(rawUser);
+
+  return success ?  user : null;
+}
+
+// function only selects the set property from the Cookies type
 function setCookie(sessionId: string, cookies: Pick<Cookies, "set">) {
   cookies.set(COOKIE_SESSION_KEY, sessionId, {
     secure: true, //makes sure it is always encrypted when it is sent over the network

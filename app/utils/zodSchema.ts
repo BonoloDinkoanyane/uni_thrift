@@ -47,7 +47,17 @@ export const signUpSchema = z.object({
     password: passwordSchema,
 });
 
-export const loginSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(1, { message: "Password is required" }),
-});
+export const signInSchema = z
+  .object({
+    identifier: z.string().min(1, "Email or username is required"),
+    password: z.string().min(1, "Password is required"),
+  })
+  .refine(
+    (data) =>
+      emailSchema.safeParse(data.identifier).success ||
+      usernameSchema.safeParse(data.identifier).success,
+    {
+      message: "Must be a valid email or username",
+      path: ["identifier"],
+    }
+  );

@@ -3,9 +3,9 @@
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { registerSchema, signUpSchema } from "./utils/zodSchema";
+import { registerSchema, signInSchema, signUpSchema } from "./utils/zodSchema";
 import z from "zod";
-import { generateSalt, hashPassword } from "./utils/Auth/passwordHasher";
+import { comparePasswords, generateSalt, hashPassword } from "./utils/Auth/passwordHasher";
 import { create } from "domain";
 import { createSession, userSession } from "./utils/sessionManagement/session";
 import { cookies } from "next/headers";
@@ -50,20 +50,93 @@ export async function registerUser(prevState: any, formData: FormData) {
     return redirect("/browse");
 }
 
-export async function signIn(){
-
-}
-
-export async function signUp(user: unknown) {
+export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
     // validates the input data against the signup schema (username, email, password)
-    const parsed = signUpSchema.safeParse(user);
+    const { success, data } = signInSchema.safeParse(unsafeData)
 
-    if (!parsed.success) {
-        return { error: "Invalid input" };
+    if (!success) {
+        return { error: "Unable to log you in" };
     }
 
-    // extracts the validated fields - always use parsed.data for type safety
-    const { username, email, password } = parsed.data;
+    // destructures, and extracts the validated fields 
+    const { identifier, password } = data;
+
+    const user = await db.user.findFirst({
+        where: {
+            OR: [
+                { username: identifier },
+                { email: identifier },
+            ],
+        },
+
+        select: { 
+            passwordHash: true, 
+            salt: true, 
+            userId: true, 
+            username: true, 
+            email: true, 
+            isVerified: true, 
+            isBanned: true, 
+            createdAt: true, 
+            updatedAt: true 
+        },
+    });
+
+    if (!user) {
+        return { error: "Invalid credentials" };
+    }
+
+    if(user.isBanned){
+        return { error: "Your account has been banned. Please contact support." };
+    }
+
+    const isCorrectPaasword = await comparePasswords({
+        password,
+        salt: user.salt,
+        hashedPassword: user.passwordHash,
+    });
+
+    if(!isCorrectPaasword){
+        return { error: "Incorrect password" };
+    }
+
+    // maps database user object to session format
+    // extracts only the fields needed for the session (excludes passwordHash and salt)
+    const userSessionData: userSession = {
+        userId: user.userId,  // Map id to userId
+        username: user.username ?? "",
+        email: user.email,
+        isVerified: user.isVerified ?? false,
+        isBanned: user.isBanned ?? false,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+    };
+
+    // obtains the cookies adapter - this bridges Next.js's cookie API to our custom Cookies interface
+    // the adapter translates between incompatible type signatures (method overloads, return types, option formats)
+    // specifically, it converts Next.js's complex cookie methods into our simplified interface
+    // this allows createSession() to remain framework-agnostic and work with any cookie implementation
+    const cookiesAdapter = await getCookiesAdapter();
+
+    // creates a session for the newly created user by:
+    // 1. generating a secure random session ID
+    // 2. storing the session data in Redis with expiration
+    // 3. setting a session cookie in the user's browser (via the adapter)
+    await createSession(userSessionData, cookiesAdapter); 
+
+    redirect("/")
+}
+
+export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
+    // validates the input data against the signup schema (username, email, password)
+    const { success, data } = signUpSchema.safeParse(unsafeData)
+
+    if (!success) {
+        return { error: "Unable to create account" };
+    }
+
+    // destructures, and extracts the validated fields 
+    const { username, email, password } = data;
 
     // checks if a user with the same username or email already exists
     const existingUser = await db.user.findFirst({
@@ -122,7 +195,7 @@ export async function signUp(user: unknown) {
         // 1. generating a secure random session ID
         // 2. storing the session data in Redis with expiration
         // 3. setting a session cookie in the user's browser (via the adapter)
-        await createSession(userSessionData,cookiesAdapter);
+        await createSession(userSessionData, cookiesAdapter);
     } catch (error) {
         //catches any errors during user creation or session creation
         return { error: "Unable to create account" };
