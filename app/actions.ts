@@ -28,7 +28,9 @@ export async function registerUser(prevState: any, formData: FormData) {
         const campusId = Number(submission.value.campus);
 
         if (isNaN(universityId) || isNaN(campusId)) {
-            return { error: "Invalid university or campus selection" };
+            return submission.reply({
+                formErrors: ["Invalid university or campus selection"]
+            });
         }
 
         // update user profile with onboarding information
@@ -54,20 +56,11 @@ export async function registerUser(prevState: any, formData: FormData) {
 
         // redirect to the browse page after successful onboarding
         return redirect("/browse");
-        
+
     } catch (error) {
         console.error("Registration error:", error);
-        
-        // handle specific Prisma errors
-        if (error instanceof Error) {
-            if (error.message.includes("Record to update not found")) {
-                return { error: "User not found" };
-            }
-            if (error.message.includes("Foreign key constraint")) {
-                return { error: "Invalid university or campus selection" };
-            }
-        }
-        
+
+        // Return a plain error object - component will need to handle this
         return { error: "Unable to complete registration. Please try again." };
     }
 }
@@ -93,16 +86,16 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
                 ],
             },
 
-            select: { 
-                passwordHash: true, 
-                salt: true, 
-                userId: true, 
-                username: true, 
-                email: true, 
-                isVerified: true, 
-                isBanned: true, 
-                createdAt: true, 
-                updatedAt: true 
+            select: {
+                passwordHash: true,
+                salt: true,
+                userId: true,
+                username: true,
+                email: true,
+                isVerified: true,
+                isBanned: true,
+                createdAt: true,
+                updatedAt: true
             },
         });
 
@@ -112,7 +105,7 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
         }
 
         // check if user account is banned
-        if(user.isBanned){
+        if (user.isBanned) {
             return { error: "Your account has been banned. Please contact support." };
         }
 
@@ -122,7 +115,7 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
             hashedPassword: user.passwordHash,
         });
 
-        if(!isCorrectPassword){
+        if (!isCorrectPassword) {
             return { error: "Incorrect password" };
         }
 
@@ -148,12 +141,12 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
         // 1. generating a secure random session ID
         // 2. storing the session data in Redis with expiration
         // 3. setting a session cookie in the user's browser (via the adapter)
-        await createSession(userSessionData, cookiesAdapter); 
+        await createSession(userSessionData, cookiesAdapter);
 
     } catch (error) {
 
         console.error("Sign in error:", error);
-        
+
         // handle specific errors
         if (error instanceof Error) {
             if (error.message.includes("Redis")) {
@@ -212,7 +205,7 @@ export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
         });
 
         //verifies that the user creation has succeeded by checking newUser is not null
-        if (newUser == null){ 
+        if (newUser == null) {
             return { error: "Unable to create account" };
         }
 
@@ -282,7 +275,7 @@ export async function logOut() {
         // redirects even if the session deletion fails
         // ensures the user can't get stuck
     }
-    
+
     // always redirect to home page after logout attempt
     redirect("/");
 }
