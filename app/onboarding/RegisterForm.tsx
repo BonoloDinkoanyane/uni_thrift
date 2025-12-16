@@ -46,11 +46,11 @@ export default function Register({ universities }: { universities: { id: number;
 
         startTransition(async () => {
             //calling the server action directly to get campuses
-            const data = await getCampuses(Number(uniId)) 
+            const data = await getCampuses(Number(uniId))
             setCampuses(data)
         })
     }
-  
+
     const [agreedToTerms, setAgreedToTerms] = useState(false);
 
     const getPasswordStrength = (password: string) => {
@@ -73,139 +73,157 @@ export default function Register({ universities }: { universities: { id: number;
             subtitle="Create your account to start trading"
         >
             <CardContent>
-            <form 
-             action = {action}
-             onSubmit={form.onSubmit} 
-             className="space-y-4"
-             id = {form.id}
-             noValidate
-             >
-                {/* Name Field */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            Full Name
-                        </Label>
-                        <Input
-                            key={fields.fullName.key}
-                            name={fields.fullName.name}
-                            defaultValue={fields.fullName.initialValue}
-                            placeholder="John Doe"
-                            className="transition-all duration-200 focus:scale-[1.01]"
-                            required
-                        />
+                <form
+                    action={action}
+                    onSubmit={form.onSubmit}
+                    className="space-y-4"
+                    id={form.id}
+                    noValidate
+                >
+                    {/* Form-level errors */}
+                    {form.errors && form.errors.length > 0 && (
+                        <div className="p-3 mb-4 bg-destructive/10 border border-destructive rounded-md">
+                            <p className="text-sm text-destructive font-medium">
+                                {form.errors.join(", ")}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Handle plain error object from catch block */}
+                    {lastResult && typeof lastResult === "object" && "error" in lastResult && typeof lastResult.error === "string" && (
+                        <div className="p-3 mb-4 bg-destructive/10 border border-destructive rounded-md">
+                            <p className="text-sm text-destructive font-medium">
+                                {lastResult.error}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Name Field */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                Full Name
+                            </Label>
+                            <Input
+                                key={fields.fullName.key}
+                                name={fields.fullName.name}
+                                defaultValue={fields.fullName.initialValue as string}
+                                placeholder="John Doe"
+                                className="transition-all duration-200 focus:scale-[1.01]"
+                                required
+                            />
+                        </div>
+                        <p className="text-sm text-red-500">{fields.fullName.errors}</p>
                     </div>
-                    <p className="text-sm text-red-500">{fields.fullName.errors}</p>
-                </div>
 
-                {/* username Field */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            Username
-                        </Label>
-                        <Input
-                            key={fields.username.key}
-                            name={fields.username.name}
-                            defaultValue={fields.username.initialValue}
-                            placeholder="John Doe"
-                            className="transition-all duration-200 focus:scale-[1.01]"
-                            required
-                        />
+                    {/* username Field */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                Username
+                            </Label>
+                            <Input
+                                key={fields.username.key}
+                                name={fields.username.name}
+                                defaultValue={fields.username.initialValue as string}
+                                placeholder="John Doe"
+                                className="transition-all duration-200 focus:scale-[1.01]"
+                                required
+                            />
+                        </div>
+                        <p className="text-sm text-red-500">{fields.username.errors}</p>
                     </div>
-                    <p className="text-sm text-red-500">{fields.username.errors}</p>
-                </div>
 
-                {/* Email Field */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            University Email
-                        </Label>
-                        <Input
-                            key={fields.email.key} 
-                            name={fields.email.name}
-                            defaultValue={fields.email.initialValue}
-                            placeholder="example@university.ac.za"
-                            className="transition-all duration-200 focus:scale-[1.01]"
-                            required
-                        />
+                    {/* Email Field */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                University Email
+                            </Label>
+                            <Input
+                                key={fields.email.key}
+                                name={fields.email.name}
+                                defaultValue={fields.email.initialValue as string}
+                                placeholder="example@university.ac.za"
+                                className="transition-all duration-200 focus:scale-[1.01]"
+                                required
+                            />
+                        </div>
+                        <p className="text-sm text-red-500">{fields.email.errors}</p>
                     </div>
-                    <p className="text-sm text-red-500">{fields.email.errors}</p>
-                </div>
 
-                {/* University Select */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            University
-                        </Label>
-                        <Select 
-                         value={selectedUniversity} 
-                         onValueChange={handleUniversityChange}
-                         required
-                        >
-                            <SelectTrigger className="w-[285px]">
-                                <SelectValue placeholder="Select University" />
-                            </SelectTrigger>
+                    {/* University Select */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                University
+                            </Label>
+                            <Select
+                                value={selectedUniversity}
+                                onValueChange={handleUniversityChange}
+                                required
+                            >
+                                <SelectTrigger className="w-[285px]">
+                                    <SelectValue placeholder="Select University" />
+                                </SelectTrigger>
 
-                            <SelectContent>
-                                {universities.map((uni) => (
-                                    <SelectItem key={uni.id} value={uni.id.toString()}>
-                                        {uni.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                                <SelectContent>
+                                    {universities.map((uni) => (
+                                        <SelectItem key={uni.id} value={uni.id.toString()}>
+                                            {uni.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <p className="text-sm text-red-500">{fields.university.errors}</p>
                     </div>
-                    <p className="text-sm text-red-500">{fields.university.errors}</p>
-                </div>
 
-                {/* Campus Select */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            Campus (Optional)
-                        </Label>
-                        <Select
-                            value={selectedCampus}
-                            onValueChange={setSelectedCampus}
-                            disabled={!selectedUniversity}
-                            required
-                         >
-                            <SelectTrigger className="w-[285px]">
-                            <SelectValue placeholder="Select Campus" />
-                            </SelectTrigger>
-                            <SelectContent>
-                            {campuses.map((campus) => (
-                                <SelectItem key={campus.id} value={campus.id.toString()}>
-                                    {campus.name}
-                                </SelectItem>
-                            ))}
-                            </SelectContent>
-                        </Select>
+                    {/* Campus Select */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                Campus (Optional)
+                            </Label>
+                            <Select
+                                value={selectedCampus}
+                                onValueChange={setSelectedCampus}
+                                disabled={!selectedUniversity}
+                                required
+                            >
+                                <SelectTrigger className="w-[285px]">
+                                    <SelectValue placeholder="Select Campus" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {campuses.map((campus) => (
+                                        <SelectItem key={campus.id} value={campus.id.toString()}>
+                                            {campus.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <p className="text-sm text-red-500">{fields.campus.errors}</p>
                     </div>
-                    <p className="text-sm text-red-500">{fields.campus.errors}</p>
-                </div>
 
-                {/* Password Field */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            Password
-                        </Label> 
+                    {/* Password Field */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                Password
+                            </Label>
                             <div className="relative">
                                 <Input
                                     key={fields.password.key}
                                     name={fields.password.name}
-                                    defaultValue={fields.password.initialValue}
+                                    defaultValue={fields.password.initialValue as string}
                                     placeholder={!showPassword ? "••••••••" : ""} // dynamic placeholder
                                     type={showPassword ? "text" : "password"} // setting the toggle type to password
-                                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                                     className="transition-all duration-200 focus:scale-[1.01] pr-12"
                                     required
                                 />
-                        
+
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(prev => !prev)}
@@ -236,95 +254,95 @@ export default function Register({ universities }: { universities: { id: number;
                                     </div>
                                 </div>
                             )}
-                    </div>
-                    {fields.password.errors && fields.password.errors.length > 0 && (
-                        <ul className="text-sm text-destructive list-disc list-inside space-y-1 mt-1">
-                            {fields.password.errors.map((err, index) => (
-                                <li key={index}>{err}</li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-
-                {/* Confirm Password Field */}
-                <div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">
-                            Confirm Password
-                        </Label>
-                        <div className="relative">
-                            <Input
-                                key={fields.confirmPassword.key}
-                                name={fields.confirmPassword.name}
-                                defaultValue={fields.confirmPassword.initialValue}
-                                type={showConfirmPassword ? "text" : "password"}
-                                placeholder={!showConfirmPassword ? "••••••••" : ""} // dynamic placeholder
-                                className="transition-all duration-200 focus:scale-[1.01]"
-                                onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                                required
-                            />
-                            
-                            <button
-                                type="button"
-                                onClick={() => setShowConfirmPassword(prev => !prev)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-primary hover:text-primary/80"
-                            >
-                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
                         </div>
+                        {fields.password.errors && fields.password.errors.length > 0 && (
+                            <ul className="text-sm text-destructive list-disc list-inside space-y-1 mt-1">
+                                {fields.password.errors.map((err, index) => (
+                                    <li key={index}>{err}</li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
 
-                    {fields.confirmPassword.errors && fields.confirmPassword.errors.length > 0 && (
-                        <ul className="text-sm text-red-500 list-disc list-inside mt-1">
-                            {fields.confirmPassword.errors.map((err, index) => (
-                                <li key={index}>{err}</li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                    {/* Confirm Password Field */}
+                    <div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                                Confirm Password
+                            </Label>
+                            <div className="relative">
+                                <Input
+                                    key={fields.confirmPassword.key}
+                                    name={fields.confirmPassword.name}
+                                    defaultValue={fields.confirmPassword.initialValue as string}
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder={!showConfirmPassword ? "••••••••" : ""} // dynamic placeholder
+                                    className="transition-all duration-200 focus:scale-[1.01]"
+                                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                                    required
+                                />
 
-                {/* Terms and Conditions */}
-                <div className="flex items-start gap-2">
-                    <input
-                        type="checkbox"
-                        id="terms"
-                        checked={agreedToTerms}
-                        onChange={(e) => setAgreedToTerms(e.target.checked)}
-                        className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/50"
-                        required
-                    />
-                    <Label className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                        I agree to the{" "}
-                        <Link href="/terms" className="text-primary hover:text-primary/80 transition-colors">
-                            Terms of Service
-                        </Link>{" "}
-                        and {" "}
-                        <Link href="/privacy" className="text-primary hover:text-primary/80 transition-colors">
-                            Privacy Policy
-                        </Link>
-                    </Label>
-                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(prev => !prev)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-primary hover:text-primary/80"
+                                >
+                                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
+                        </div>
 
-                {/* Submit Button */}
-                <Button
-                    type="submit"
-                    className="w-full h-11 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]"
-                > Submit
-                </Button>
+                        {fields.confirmPassword.errors && fields.confirmPassword.errors.length > 0 && (
+                            <ul className="text-sm text-red-500 list-disc list-inside mt-1">
+                                {fields.confirmPassword.errors.map((err, index) => (
+                                    <li key={index}>{err}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
 
-                {/* Sign In Link */}
-                <div className="text-center pt-4">
-                    <p className="text-sm text-muted-foreground">
-                        Already have an account?{" "}
-                        <Link
-                            href="/login"
-                            className="text-primary font-semibold hover:text-primary/80 transition-colors"
-                        >
-                            Sign in
-                        </Link>
-                    </p>
-                </div>
-            </form>
+                    {/* Terms and Conditions */}
+                    <div className="flex items-start gap-2">
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            checked={agreedToTerms}
+                            onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/50"
+                            required
+                        />
+                        <Label className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                            I agree to the{" "}
+                            <Link href="/terms" className="text-primary hover:text-primary/80 transition-colors">
+                                Terms of Service
+                            </Link>{" "}
+                            and {" "}
+                            <Link href="/privacy" className="text-primary hover:text-primary/80 transition-colors">
+                                Privacy Policy
+                            </Link>
+                        </Label>
+                    </div>
+
+                    {/* Submit Button */}
+                    <Button
+                        type="submit"
+                        className="w-full h-11 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]"
+                    > Submit
+                    </Button>
+
+                    {/* Sign In Link */}
+                    <div className="text-center pt-4">
+                        <p className="text-sm text-muted-foreground">
+                            Already have an account?{" "}
+                            <Link
+                                href="/login"
+                                className="text-primary font-semibold hover:text-primary/80 transition-colors"
+                            >
+                                Sign in
+                            </Link>
+                        </p>
+                    </div>
+                </form>
             </CardContent>
         </AuthCard>
     );

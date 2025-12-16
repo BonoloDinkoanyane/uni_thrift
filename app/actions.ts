@@ -13,13 +13,18 @@ import { getCookiesAdapter } from "./utils/sessionManagement/cookiesAdapter";
 
 
 export async function registerUser(prevState: any, formData: FormData) {
+    console.log("[registerUser] Starting registration");
+
     try {
         // session is guaranteed to exist here because requireUser redirects if not
         const submission = parseWithZod(formData, {
             schema: registerSchema,
         });
 
+        console.log("[registerUser] Submission status:", submission.status);
+
         if (submission.status !== "success") {
+            console.log("[registerUser] Validation failed, returning errors");
             return submission.reply();
         }
 
@@ -27,11 +32,16 @@ export async function registerUser(prevState: any, formData: FormData) {
         const universityId = Number(submission.value.university);
         const campusId = Number(submission.value.campus);
 
+        console.log("[registerUser] University ID:", universityId, "Campus ID:", campusId);
+
         if (isNaN(universityId) || isNaN(campusId)) {
+            console.log("[registerUser] Invalid university/campus selection");
             return submission.reply({
                 formErrors: ["Invalid university or campus selection"]
             });
         }
+
+        console.log("[registerUser] Updating user:", submission.value.username);
 
         // update user profile with onboarding information
         const data = await db.user.update({
@@ -54,11 +64,13 @@ export async function registerUser(prevState: any, formData: FormData) {
             }
         });
 
+        console.log("[registerUser] User updated successfully, redirecting to /browse");
+
         // redirect to the browse page after successful onboarding
         return redirect("/browse");
 
     } catch (error) {
-        console.error("Registration error:", error);
+        console.error("[registerUser] Error:", error);
 
         // Return a plain error object - component will need to handle this
         return { error: "Unable to complete registration. Please try again." };
@@ -131,11 +143,15 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
             updatedAt: user.updatedAt,
         };
 
+        console.log("[signIn] Creating session for user:", user.userId);
+
         // obtains the cookies adapter - this bridges Next.js's cookie API to our custom Cookies interface
         // the adapter translates between incompatible type signatures (method overloads, return types, option formats)
         // specifically, it converts Next.js's complex cookie methods into our simplified interface
         // this allows createSession() to remain framework-agnostic and work with any cookie implementation
         const cookiesAdapter = await getCookiesAdapter();
+
+        console.log("[signIn] Cookies adapter obtained");
 
         // creates a session for the newly created user by:
         // 1. generating a secure random session ID
@@ -143,12 +159,15 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
         // 3. setting a session cookie in the user's browser (via the adapter)
         await createSession(userSessionData, cookiesAdapter);
 
+        console.log("[signIn] Session created successfully");
+
     } catch (error) {
 
         console.error("Sign in error:", error);
 
         // handle specific errors
         if (error instanceof Error) {
+            console.log("[signIn] Error type:", error.message);
             if (error.message.includes("Redis")) {
                 return { error: "Session service unavailable. Please try again." };
             }
@@ -160,8 +179,9 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
         return { error: "Unable to sign in. Please try again." };
     }
 
+    console.log("[signIn] About to redirect to /profile");
     //only redirects if sign in is successful
-    redirect("/");
+    redirect("/profile");
 }
 
 export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
@@ -277,5 +297,5 @@ export async function logOut() {
     }
 
     // always redirect to home page after logout attempt
-    redirect("/");
+    redirect("/onboarding");
 }

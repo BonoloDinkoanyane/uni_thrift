@@ -1,4 +1,3 @@
-import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { requireUser } from "../utils/hooks";
@@ -7,22 +6,30 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Package, Star, LogOut, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { logOut } from "@/app/actions";
 
-async function getUserdata(auth0Id: string) {
-  if (!auth0Id) return null;
+async function getUserdata(userId: string) {
 
   const data = await db.user.findUnique({
     where: {
-      auth0Id,
+      userId: userId,
     },
     select: {
-      id: true,
+      userId: true,
       name: true,
       username: true,
       email: true,
       avatarUrl: true,
       bio: true,
+      onboardingComplete: true,
+      passwordHash: true,
+      salt: true,
+      universityId: true,
+      campusId: true,
+      isVerified: true,
+      isBanned: true,
       createdAt: true,
+      updatedAt: true,
       university: {
         select: {
           name: true,
@@ -90,19 +97,27 @@ async function getListingData(userId: string) {
 export default async function ProfilePage() {
 
   const session = await requireUser();
-  const auth0Id = session!.user.sub;
 
-  if (!auth0Id) {
+  if (!session) {
     redirect("/login");
   }
 
-  const data = await getUserdata(auth0Id);
+  const data = await getUserdata(session.userId);
 
-  // If user not in database, fetch listings will be empty
-  const listings = data?.id ? await getListingData(data.id) : [];
+  // If user not in database, redirect to login
+  if (!data) {
+    redirect("/login");
+  }
+
+  // If user hasn't completed onboarding, redirect to onboarding
+  if (!data.onboardingComplete) {
+    redirect("/onboarding");
+  }
+
+  const listings = await getListingData(data.userId);
 
   return (
-   <div className="min-h-screen bg-linear-to-br from-background via-background to-primary/5 pb-20">
+    <div className="min-h-screen bg-linear-to-br from-background via-background to-primary/5 pb-20">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header with gradient background */}
         <div className="relative mb-8 -mx-4 px-4 py-8 bg-linear-to-br from-primary/10 via-accent/5 to-transparent rounded-b-3xl">
@@ -111,12 +126,12 @@ export default async function ProfilePage() {
               <h1 className="text-3xl font-bold mb-1">My Profile</h1>
               <p className="text-muted-foreground">Manage your account and listings</p>
             </div>
-            <Link href="/api/auth/logout">
-              <Button variant="outline" size="sm" className="shadow-sm">
+            <form action={logOut}>
+              <Button type="submit" variant="outline" size="sm" className="shadow-sm">
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>
-            </Link>
+            </form>
           </div>
         </div>
 
@@ -130,7 +145,7 @@ export default async function ProfilePage() {
                   {data?.name?.charAt(0) || data?.email?.charAt(0) || "?"}
                 </AvatarFallback>
               </Avatar>
-              {data && (
+              {data.isVerified && (
                 <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md">
                   ✓
                 </div>
@@ -141,6 +156,7 @@ export default async function ProfilePage() {
               <h2 className="text-2xl font-bold mb-1">
                 {data?.name || "Student"}
               </h2>
+              <p className="text-muted-foreground mb-1 text-sm">@{data?.username || "username"}</p>
               <p className="text-muted-foreground mb-3 text-sm">{data?.email || "No email"}</p>
 
               {/* Rating with enhanced styling */}
@@ -150,8 +166,8 @@ export default async function ProfilePage() {
                     <Star
                       key={i}
                       className={`w-4 h-4 ${i < Math.floor(data?.rating || 0)
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "text-muted-foreground/30"
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-muted-foreground/30"
                         }`}
                     />
                   ))}
@@ -248,21 +264,19 @@ export default async function ProfilePage() {
         </div>
 
         {/* Reviews Section - Placeholder */}
-        {data && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <Star className="w-5 h-5" />
-                Reviews ({data.ratingCount || 0})
-              </h3>
-            </div>
-            <Card className="p-8 text-center">
-              <p className="text-muted-foreground">
-                Reviews section coming soon
-              </p>
-            </Card>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Star className="w-5 h-5" />
+              Reviews ({data.ratingCount || 0})
+            </h3>
           </div>
-        )}
+          <Card className="p-8 text-center">
+            <p className="text-muted-foreground">
+              Reviews section coming soon
+            </p>
+          </Card>
+        </div>
       </div>
     </div>
   );

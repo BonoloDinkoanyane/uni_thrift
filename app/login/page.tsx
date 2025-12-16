@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import AuthCard from "@/components/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,7 @@ const logger = createLogger("LoginPage");
 type AuthMode = "signin" | "signup";
 
 export default function LoginPage() {
-    const router = useRouter();
+
     const [mode, setMode] = useState<AuthMode>("signin");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
@@ -72,6 +71,10 @@ export default function LoginPage() {
                 // signIn action handles redirect
             }
         } catch (error) {
+            // Check if this is a Next.js redirect (which is expected)
+            if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+                throw error; // Re-throw to allow redirect to proceed
+            }
             logger.error(error, { operation: "signIn" });
             setError("An unexpected error occurred. Please try again.");
         } finally {
@@ -126,6 +129,10 @@ export default function LoginPage() {
                 // signUp action handles redirect
             }
         } catch (error) {
+            // Check if this is a Next.js redirect (which is expected)
+            if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+                throw error; // Re-throw to allow redirect to proceed
+            }
             logger.error(error, { operation: "signUp" });
             setError("An unexpected error occurred. Please try again.");
         } finally {
@@ -194,6 +201,7 @@ export default function LoginPage() {
                             value={identifier}
                             onChange={(e) => setIdentifier(e.target.value)}
                             className="transition-all duration-200 focus:scale-[1.01]"
+                            autoComplete="username"
                             required
                             disabled={isLoading}
                         />
@@ -220,6 +228,7 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="transition-all duration-200 focus:scale-[1.01] pr-12"
+                                autoComplete="current-password"
                                 required
                                 disabled={isLoading}
                             />
@@ -279,6 +288,7 @@ export default function LoginPage() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="transition-all duration-200 focus:scale-[1.01]"
+                            autoComplete="username"
                             required
                             disabled={isLoading}
                         />
@@ -299,6 +309,7 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="transition-all duration-200 focus:scale-[1.01]"
+                            autoComplete="email"
                             required
                             disabled={isLoading}
                         />
@@ -320,6 +331,7 @@ export default function LoginPage() {
                                 value={signupPassword}
                                 onChange={(e) => setSignupPassword(e.target.value)}
                                 className="transition-all duration-200 focus:scale-[1.01] pr-12"
+                                autoComplete="new-password"
                                 required
                                 disabled={isLoading}
                             />
@@ -374,6 +386,7 @@ export default function LoginPage() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 className="transition-all duration-200 focus:scale-[1.01] pr-12"
+                                autoComplete="new-password"
                                 required
                                 disabled={isLoading}
                             />
