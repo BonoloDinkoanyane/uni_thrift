@@ -48,10 +48,6 @@ export async function createSession(user: userSession, cookies: Pick<Cookies, "s
   const sessionId = crypto.randomBytes(512).toString("hex").normalize();
   const redisKey = `session:${sessionId}`;
 
-  console.log("[createSession] SessionId:", sessionId);
-  console.log("[createSession] Redis key:", redisKey);
-  console.log("[createSession] User data to store:", user);
-
   await redisClient.set(redisKey, sessionSchema.parse(user), {
     ex: SESSION_EXPIRATION_SECONDS // 1 week expiration
   });
@@ -66,8 +62,6 @@ export function getUserFromSession(cookies: Pick<Cookies, "get">) {
 
   //fetches the sessionId from the cookies
   const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value;
-  console.log("[getUserFromSession] Looking for cookie:", COOKIE_SESSION_KEY);
-  console.log("[getUserFromSession] SessionId from cookie:", sessionId || "NOT FOUND");
 
   if (sessionId == null) {
     return null;
@@ -95,28 +89,16 @@ export async function deleteUserSession(cookies: Pick<Cookies, "get" | "delete">
 //accesses the storage (redis) to get the user session data by sessionId to get the user information 
 async function getUserSessionById(sessionId: string) {
   const redisKey = `session:${sessionId}`;
-  console.log("[getUserSessionById] Looking up Redis key:", redisKey);
 
   const rawUser = await redisClient.get(redisKey);
-  console.log("[getUserSessionById] Raw data from Redis:", rawUser);
-  console.log("[getUserSessionById] Type of raw data:", typeof rawUser);
 
   const { success, data: user } = sessionSchema.safeParse(rawUser);
-  console.log("[getUserSessionById] Zod parse success:", success);
-
-  if (!success) {
-    console.log("[getUserSessionById] Zod parse failed - session data invalid or missing");
-  } else {
-    console.log("[getUserSessionById] Zod parse succeeded:", user);
-  }
 
   return success ? user : null;
 }
 
 // function only selects the set property from the Cookies type
 function setCookie(sessionId: string, cookies: Pick<Cookies, "set">) {
-  console.log("[setCookie] Setting cookie:", COOKIE_SESSION_KEY);
-  console.log("[setCookie] SessionId:", sessionId);
 
   cookies.set(COOKIE_SESSION_KEY, sessionId, {
     secure: true, //makes sure it is always encrypted when it is sent over the network
@@ -125,5 +107,4 @@ function setCookie(sessionId: string, cookies: Pick<Cookies, "set">) {
     expires: Date.now() + SESSION_EXPIRATION_SECONDS * 1000,
   });
 
-  console.log("[setCookie] Cookie set successfully");
 }

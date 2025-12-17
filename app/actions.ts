@@ -166,23 +166,17 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
             updatedAt: user.updatedAt,
         };
 
-        console.log("[signIn] Creating session for user:", user.userId);
-
         // obtains the cookies adapter - this bridges Next.js's cookie API to our custom Cookies interface
         // the adapter translates between incompatible type signatures (method overloads, return types, option formats)
         // specifically, it converts Next.js's complex cookie methods into our simplified interface
         // this allows createSession() to remain framework-agnostic and work with any cookie implementation
         const cookiesAdapter = await getCookiesAdapter();
 
-        console.log("[signIn] Cookies adapter obtained");
-
         // creates a session for the newly created user by:
         // 1. generating a secure random session ID
         // 2. storing the session data in Redis with expiration
         // 3. setting a session cookie in the user's browser (via the adapter)
         await createSession(userSessionData, cookiesAdapter);
-
-        console.log("[signIn] Session created successfully");
 
     } catch (error) {
 
@@ -201,8 +195,6 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
 
         return { error: "Unable to sign in. Please try again." };
     }
-
-    console.log("[signIn] About to redirect to /profile");
     //only redirects if sign in is successful
     redirect("/profile");
 }
