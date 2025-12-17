@@ -3,23 +3,44 @@
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { registerSchema, signInSchema, signUpSchema } from "./utils/zodSchema";
+import { registerSchema, signInSchema, signUpSchema, onboardingSchema } from "./utils/zodSchema";
 import z from "zod";
 import { comparePasswords, generateSalt, hashPassword } from "./utils/Auth/passwordHasher";
 import { create } from "domain";
-import { createSession, deleteUserSession, userSession } from "./utils/sessionManagement/session";
+import { createSession, deleteUserSession, getUserFromSession, userSession } from "./utils/sessionManagement/session";
 import { cookies } from "next/headers";
 import { getCookiesAdapter } from "./utils/sessionManagement/cookiesAdapter";
 
 
 export async function registerUser(prevState: any, formData: FormData) {
+
     console.log("[registerUser] Starting registration");
 
-    try {
-        // session is guaranteed to exist here because requireUser redirects if not
+      // 🔑 Always parse FIRST so we have a SubmissionResult to reply with
         const submission = parseWithZod(formData, {
-            schema: registerSchema,
+            schema: onboardingSchema,
         });
+    
+    try {
+        // Get current user session
+        const cookiesAdapter = await getCookiesAdapter();
+        const session = await getUserFromSession(cookiesAdapter);
+
+         // session is guaranteed to exist here because requireUser redirects if not
+        const submission = parseWithZod(formData, {
+            schema: onboardingSchema,
+        });
+        
+        if (!session) {
+            // ✅ Conform-compatible error
+            return submission.reply({
+                formErrors: ["You must be logged in to complete onboarding"],
+            });
+        }
+        
+        console.log("[registerUser] Session user:", session.username);
+        
+        // Validate only the onboarding-specific fields (fullName, university, campus)
 
         console.log("[registerUser] Submission status:", submission.status);
 
@@ -41,17 +62,15 @@ export async function registerUser(prevState: any, formData: FormData) {
             });
         }
 
-        console.log("[registerUser] Updating user:", submission.value.username);
+        console.log("[registerUser] Updating user:", session.username);
 
         // update user profile with onboarding information
         const data = await db.user.update({
             where: {
-                username: submission.value.username as string,
+                userId: session.userId,
             },
             data: {
                 name: submission.value.fullName as string,
-                username: submission.value.username as string,
-                email: submission.value.email as string,
                 university: {
                     connect: { id: universityId }
                 },
@@ -66,15 +85,19 @@ export async function registerUser(prevState: any, formData: FormData) {
 
         console.log("[registerUser] User updated successfully, redirecting to /browse");
 
-        // redirect to the browse page after successful onboarding
-        return redirect("/browse");
-
     } catch (error) {
         console.error("[registerUser] Error:", error);
 
         // Return a plain error object - component will need to handle this
-        return { error: "Unable to complete registration. Please try again." };
+        // ✅ STILL return SubmissionResult
+        return submission.reply({
+        formErrors: ["Unable to complete registration. Please try again."],
+        });
     }
+
+            // redirect to the browse page after successful onboarding
+        return redirect("/profile");
+
 }
 
 export async function signIn(unsafeData: z.infer<typeof signInSchema>) {

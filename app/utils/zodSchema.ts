@@ -61,3 +61,16 @@ export const signInSchema = z
       path: ["identifier"],
     }
   );
+  
+// Onboarding schema - only fields not collected during signup
+export const onboardingSchema = z.object({
+    fullName: z
+        .string()
+        .min(2, { message: "Full name is required" }),
+    university: z
+        .string()
+        .min(1, { message: "Please select your university" }),
+    campus: z
+        .string()
+        .optional()
+});

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, startTransition, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import AuthCard from "@/components/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { registerSchema } from "../utils/zodSchema";
+import { onboardingSchema, registerSchema } from "../utils/zodSchema";
 import { parseWithZod } from "@conform-to/zod";
 import { useActionState, } from "react";
 import { useForm } from "@conform-to/react";
@@ -23,7 +23,7 @@ export default function Register({ universities }: { universities: { id: number;
         lastResult,
         onValidate({ formData }) {
             return parseWithZod(formData, {
-                schema: registerSchema,
+                schema: onboardingSchema,
             })
         },
         shouldValidate: "onBlur", //validates when the users clicks out of the input field
@@ -75,28 +75,21 @@ export default function Register({ universities }: { universities: { id: number;
             <CardContent>
                 <form
                     action={action}
-                    onSubmit={form.onSubmit}
                     className="space-y-4"
                     id={form.id}
                     noValidate
                 >
-                    {/* Form-level errors */}
-                    {form.errors && form.errors.length > 0 && (
-                        <div className="p-3 mb-4 bg-destructive/10 border border-destructive rounded-md">
-                            <p className="text-sm text-destructive font-medium">
-                                {form.errors.join(", ")}
-                            </p>
-                        </div>
-                    )}
+                    <input
+                     type="hidden"
+                     name={fields.university.name}
+                     value={selectedUniversity}
+                    />
 
-                    {/* Handle plain error object from catch block */}
-                    {lastResult && typeof lastResult === "object" && "error" in lastResult && typeof lastResult.error === "string" && (
-                        <div className="p-3 mb-4 bg-destructive/10 border border-destructive rounded-md">
-                            <p className="text-sm text-destructive font-medium">
-                                {lastResult.error}
-                            </p>
-                        </div>
-                    )}
+                    <input
+                     type="hidden"
+                     name={fields.campus.name}
+                     value={selectedCampus}
+                    />
 
                     {/* Name Field */}
                     <div>
@@ -116,7 +109,7 @@ export default function Register({ universities }: { universities: { id: number;
                         <p className="text-sm text-red-500">{fields.fullName.errors}</p>
                     </div>
 
-                    {/* username Field */}
+                    {/* username Field
                     <div>
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
@@ -132,9 +125,9 @@ export default function Register({ universities }: { universities: { id: number;
                             />
                         </div>
                         <p className="text-sm text-red-500">{fields.username.errors}</p>
-                    </div>
+                    </div> */}
 
-                    {/* Email Field */}
+                    {/* Email Field
                     <div>
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
@@ -150,7 +143,7 @@ export default function Register({ universities }: { universities: { id: number;
                             />
                         </div>
                         <p className="text-sm text-red-500">{fields.email.errors}</p>
-                    </div>
+                    </div> */}
 
                     {/* University Select */}
                     <div>
@@ -161,7 +154,6 @@ export default function Register({ universities }: { universities: { id: number;
                             <Select
                                 value={selectedUniversity}
                                 onValueChange={handleUniversityChange}
-                                required
                             >
                                 <SelectTrigger className="w-[285px]">
                                     <SelectValue placeholder="Select University" />
@@ -189,7 +181,6 @@ export default function Register({ universities }: { universities: { id: number;
                                 value={selectedCampus}
                                 onValueChange={setSelectedCampus}
                                 disabled={!selectedUniversity}
-                                required
                             >
                                 <SelectTrigger className="w-[285px]">
                                     <SelectValue placeholder="Select Campus" />
@@ -206,7 +197,7 @@ export default function Register({ universities }: { universities: { id: number;
                         <p className="text-sm text-red-500">{fields.campus.errors}</p>
                     </div>
 
-                    {/* Password Field */}
+                    {/* Password Field
                     <div>
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
@@ -219,7 +210,12 @@ export default function Register({ universities }: { universities: { id: number;
                                     defaultValue={fields.password.initialValue as string}
                                     placeholder={!showPassword ? "••••••••" : ""} // dynamic placeholder
                                     type={showPassword ? "text" : "password"} // setting the toggle type to password
-                                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                                    onInput={(e) =>
+                                        setFormData(prev => ({
+                                        ...prev,
+                                        password: (e.target as HTMLInputElement).value,
+                                        }))
+                                    }
                                     className="transition-all duration-200 focus:scale-[1.01] pr-12"
                                     required
                                 />
@@ -233,38 +229,38 @@ export default function Register({ universities }: { universities: { id: number;
                                 </button>
                             </div>
 
-                            {/* Password Strength Indicator */}
-                            {formData.password && (
-                                <div className="space-y-1">
-                                    <div className="flex items-center justify-between text-xs">
-                                        <span className="text-muted-foreground">Password strength:</span>
-                                        <span className={`font-medium ${passwordStrength.strength === 100 ? "text-green-500" :
-                                            passwordStrength.strength >= 75 ? "text-blue-500" :
-                                                passwordStrength.strength >= 50 ? "text-yellow-500" :
-                                                    "text-destructive"
-                                            }`}>
-                                            {passwordStrength.label}
-                                        </span>
-                                    </div>
-                                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full transition-all duration-300 ${passwordStrength.color}`}
-                                            style={{ width: `${passwordStrength.strength}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        {fields.password.errors && fields.password.errors.length > 0 && (
-                            <ul className="text-sm text-destructive list-disc list-inside space-y-1 mt-1">
-                                {fields.password.errors.map((err, index) => (
-                                    <li key={index}>{err}</li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+                    //         {/* Password Strength Indicator */
+                    //         
+                    //             <div className="space-y-1">
+                    //                 <div className="flex items-center justify-between text-xs">
+                    //                     <span className="text-muted-foreground">Password strength:</span>
+                    //                     <span className={`font-medium ${passwordStrength.strength === 100 ? "text-green-500" :
+                    //                         passwordStrength.strength >= 75 ? "text-blue-500" :
+                    //                             passwordStrength.strength >= 50 ? "text-yellow-500" :
+                    //                                 "text-destructive"
+                    //                         }`}>
+                    //                         {passwordStrength.label}
+                    //                     </span>
+                    //                 </div>
+                    //                 <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                    //                     <div
+                    //                         className={`h-full transition-all duration-300 ${passwordStrength.color}`}
+                    //                         style={{ width: `${passwordStrength.strength}%` }}
+                    //                     />
+                    //                 </div>
+                    //             </div>
+                    //         )}
+                    //     </div>
+                    //     {fields.password.errors && fields.password.errors.length > 0 && (
+                    //         <ul className="text-sm text-destructive list-disc list-inside space-y-1 mt-1">
+                    //             {fields.password.errors.map((err, index) => (
+                    //                 <li key={index}>{err}</li>
+                    //             ))}
+                    //         </ul>
+                    //     )}
+                    // </div> 
 
-                    {/* Confirm Password Field */}
+                    /* Confirm Password Field
                     <div>
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
@@ -299,7 +295,7 @@ export default function Register({ universities }: { universities: { id: number;
                                 ))}
                             </ul>
                         )}
-                    </div>
+                    </div> */}
 
                     {/* Terms and Conditions */}
                     <div className="flex items-start gap-2">
@@ -326,8 +322,9 @@ export default function Register({ universities }: { universities: { id: number;
                     {/* Submit Button */}
                     <Button
                         type="submit"
+                        disabled={isPending}
                         className="w-full h-11 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]"
-                    > Submit
+                    > {isPending ? "Creating account..." : "Submit"}
                     </Button>
 
                     {/* Sign In Link */}
