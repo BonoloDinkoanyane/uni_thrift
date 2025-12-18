@@ -10,7 +10,7 @@ import { onboardingSchema, registerSchema } from "../utils/zodSchema";
 import { parseWithZod } from "@conform-to/zod";
 import { useActionState, } from "react";
 import { useForm } from "@conform-to/react";
-import { registerUser } from "../actions";
+import { registerUser } from "../actions/account actions/actions";
 import { CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getCampuses } from "../utils/uniSelector";
