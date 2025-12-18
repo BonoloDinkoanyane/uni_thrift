@@ -3,13 +3,13 @@
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { registerSchema, signInSchema, signUpSchema, onboardingSchema } from "../../utils/zodSchema";
+import { registerSchema, signInSchema, signUpSchema, onboardingSchema } from "../../zodSchema";
 import z from "zod";
-import { comparePasswords, generateSalt, hashPassword } from "../../utils/Auth/passwordHasher";
+import { comparePasswords, generateSalt, hashPassword } from "../../Auth/passwordHasher";
 import { create } from "domain";
-import { createSession, deleteUserSession, getUserFromSession, userSession } from "../../utils/sessionManagement/session";
+import { createSession, deleteUserSession, getUserFromSession, userSession } from "../../sessionManagement/session";
 import { cookies } from "next/headers";
-import { getCookiesAdapter } from "../../utils/sessionManagement/cookiesAdapter";
+import { getCookiesAdapter } from "../../sessionManagement/cookiesAdapter";
 
 
 export async function registerUser(prevState: any, formData: FormData) {

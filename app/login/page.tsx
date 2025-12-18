@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { signIn, signUp } from "@/app/actions/account actions/actions";
+import { signIn, signUp } from "@/app/utils/actions/account actions/actions";
 import { Eye, EyeOff } from "lucide-react";
 import { createLogger } from "@/lib/logger";
 

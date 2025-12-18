@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Package, Star, LogOut, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { logOut } from "@/app/actions/account actions/actions";
+import { logOut } from "@/app/utils/actions/account actions/actions";
 
 async function getUserdata(userId: string) {
 
