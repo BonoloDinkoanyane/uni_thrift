@@ -14,9 +14,7 @@ import { getCookiesAdapter } from "../../sessionManagement/cookiesAdapter";
 
 export async function registerUser(prevState: any, formData: FormData) {
 
-    console.log("[registerUser] Starting registration");
-
-      // 🔑 Always parse FIRST so we have a SubmissionResult to reply with
+        // Always parse FIRST so we have a SubmissionResult to reply with
         const submission = parseWithZod(formData, {
             schema: onboardingSchema,
         });

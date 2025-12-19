@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { getUserFromSession } from "../utils/sessionManagement/session";
 import { getCookiesAdapter } from "../utils/sessionManagement/cookiesAdapter";
+import { logDebug } from "@/lib/logger";
 
 /**
  * Server-side hook to require authentication
@@ -12,15 +11,22 @@ import { getCookiesAdapter } from "../utils/sessionManagement/cookiesAdapter";
 export async function requireUser() {
 
     const cookiesAdapter = await getCookiesAdapter();
-
     const session = await getUserFromSession(cookiesAdapter);
 
-    if (session) {
-        console.log("[requireUser] Session userId:", session.userId);
+    // log errors in development only
+    if (process.env.NODE_ENV === "development") {
+
+        if (session) {
+            logDebug("[requireUser] Session userId:", session.userId);
+        } else {
+            if (!session) {
+                logDebug("[requireUser]", "[requireUser] No session found, redirecting to /login");
+            }
+        }
+
     }
 
     if (!session) {
-        console.log("[requireUser] No session found, redirecting to /login");
         redirect("/login");
     }
 

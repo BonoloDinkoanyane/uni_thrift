@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Package, Star, LogOut, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logOut } from "@/app/utils/actions/account actions/actions";
+import { getCurrentUser } from "../utils/sessionManagement/currentUser";
 
 async function getUserdata(userId: string) {
 
@@ -97,6 +98,7 @@ async function getListingData(userId: string) {
 export default async function ProfilePage() {
 
   const session = await requireUser();
+  const user = await getCurrentUser({ redirectIfNotFound: true });
 
   if (!session) {
     redirect("/login");
@@ -119,6 +121,7 @@ export default async function ProfilePage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-primary/5 pb-20">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+
         {/* Header with gradient background */}
         <div className="relative mb-8 -mx-4 px-4 py-8 bg-linear-to-br from-primary/10 via-accent/5 to-transparent rounded-b-3xl">
           <div className="flex justify-between items-start">
