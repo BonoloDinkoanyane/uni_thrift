@@ -74,3 +74,15 @@ export const onboardingSchema = z.object({
         .string()
         .optional()
 });
+
+export const profileEditSchema = z.object({
+    fullName: z
+        .string()
+        .min(2, { message: "Full name is required" }),
+    username: usernameSchema,
+    email: emailSchema,
+    bio: z
+        .string()
+        .max(160, { message: "Bio cannot exceed 160 characters" })
+        .optional(),
+});
