@@ -198,7 +198,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               <div className="flex gap-2">
 
                 {/* Edit Profile Button */}
-                <Link href="/profile/edit">
+                <Link href={`/${profileData.username}/edit`}>
                   <Button variant="outline" size="sm" className="shadow-sm">
                     <Settings className="w-4 h-4 mr-2" />
                     Edit Profile

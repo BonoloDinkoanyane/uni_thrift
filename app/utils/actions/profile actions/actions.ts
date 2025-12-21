@@ -1,11 +1,11 @@
+'use server';
+
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { getUserFromSession } from "../../sessionManagement/session";
-import { getCookiesAdapter } from "../../sessionManagement/cookiesAdapter";
-import { requireUser } from "../../hooks";
 import { profileEditSchema } from "../../zodSchema";
 import { logError, logInfo } from "@/lib/logger";
+import { requireUser } from "../../hooks";
 
 export async function editProfile(prevState: any, formData: FormData) {
 
@@ -44,7 +44,7 @@ export async function editProfile(prevState: any, formData: FormData) {
         });
 
         logInfo("editProfile", "Profile updated successfully", {
-            userId: currentUser.userId
+            userId: updatedUser.userId
         });
 
         // Return submission reply - form will stay filled with updated values
