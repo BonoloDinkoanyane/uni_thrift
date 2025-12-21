@@ -4,7 +4,6 @@ import { parseWithZod } from "@conform-to/zod";
 import { getUserFromSession } from "../../sessionManagement/session";
 import { getCookiesAdapter } from "../../sessionManagement/cookiesAdapter";
 import { requireUser } from "../../hooks";
-import { cookies } from "next/headers";
 import { profileEditSchema } from "../../zodSchema";
 import { logError, logInfo } from "@/lib/logger";
 
