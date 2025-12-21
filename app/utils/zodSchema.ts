@@ -76,7 +76,7 @@ export const onboardingSchema = z.object({
 });
 
 export const profileEditSchema = z.object({
-    fullName: z
+    name: z
         .string()
         .min(2, { message: "Full name is required" }),
     username: usernameSchema,

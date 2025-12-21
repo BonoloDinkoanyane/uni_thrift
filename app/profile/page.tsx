@@ -112,7 +112,7 @@ export default async function ProfilePage() {
   }
 
   // If user hasn't completed onboarding, redirect to onboarding
-  if (!data.onboardingComplete) {
+  if (!data?.onboardingComplete) {
     redirect("/onboarding");
   }
 
