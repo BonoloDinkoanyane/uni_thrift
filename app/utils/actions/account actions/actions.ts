@@ -176,7 +176,17 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
         // 3. setting a session cookie in the user's browser (via the adapter)
         await createSession(userSessionData, cookiesAdapter);
 
+
+        console.log("[signIn] Session created successfully, redirecting to:", `/${user.username}`);
+
+        redirect(`/${user.username}`);
+
     } catch (error) {
+
+        // checks if this is a Next.js redirect - if so, re-throw it
+        if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+            throw error;
+        }
 
         console.error("Sign in error:", error);
 
@@ -193,8 +203,11 @@ export async function signIn(unsafeData: z.infer<typeof signInSchema>) {
 
         return { error: "Unable to sign in. Please try again." };
     }
+
+    // the user is now accessible here
+
     //only redirects if sign in is successful
-    redirect("/profile");
+    //redirect(`/${user.username}`);
 }
 
 export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
@@ -266,7 +279,15 @@ export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
         // 2. storing the session data in Redis with expiration
         // 3. setting a session cookie in the user's browser (via the adapter)
         await createSession(userSessionData, cookiesAdapter);
+
+        redirect(`/${data.username}`);
+
     } catch (error) {
+
+        // checks if this is a Next.js redirect - if so, re-throw it
+        if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+            throw error;
+        }
 
         console.error("Sign up error:", error);
 
@@ -290,7 +311,7 @@ export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
     }
 
     // redirect only happens if no errors occurred
-    redirect("/")
+    //redirect(`/${user.username}`);
 }
 
 export async function logOut() {
@@ -310,5 +331,5 @@ export async function logOut() {
     }
 
     // always redirect to home page after logout attempt
-    redirect("/onboarding");
+    redirect("/");
 }

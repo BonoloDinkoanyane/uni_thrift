@@ -8,6 +8,8 @@ import { Package, Star, LogOut, MapPin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logOut } from "@/app/utils/actions/account actions/actions";
 import { getCurrentUser } from "../utils/sessionManagement/currentUser";
+import { cookies } from "next/headers";
+import { getUserFromSession } from "../utils/sessionManagement/session";
 
 async function getUserData(username: string) {
 
@@ -140,14 +142,14 @@ type ListingData = Awaited<ReturnType<typeof getListingData>>;
  * - Your own profile: /your-username (with edit options)
  * - Other user's profile: /their-username (read-only)
  */
-export default async function ProfilePage({ params }: PageProps) {
-
+export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   // extracting the username from URL params
   const { username } = await params;
 
   // getting the currently logged-in user (doesn't redirect)
   // checks if the user is viewing their own profile vs someone else's
-  const session = await getCurrentUser({ redirectIfNotFound: false });
+  const cookieStore = await cookies();
+  const currentSession = await getUserFromSession(cookieStore);
 
   // fetching the profile data for the username in the URL
   const profileData = await getUserData(username);
@@ -157,7 +159,7 @@ export default async function ProfilePage({ params }: PageProps) {
   }
 
   // checks if this is the current user's own profile
-  const isOwnProfile = session?.userId === profileData.userId;
+  const isOwnProfile = currentSession?.userId === profileData.userId;
 
   // Handle banned users
   if (profileData.isBanned && !isOwnProfile) {
@@ -171,18 +173,7 @@ export default async function ProfilePage({ params }: PageProps) {
     redirect("/onboarding");
   }
 
-  if (!session) {
-    redirect("/login");
-  }
-
-  const data = await getUserData(session.userId);
-
-  // If user not in database, redirect to login
-  if (!data) {
-    redirect("/login");
-  }
-
-  const listings = await getListingData(data.userId);
+  const listings = await getListingData(profileData.userId);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-primary/5 pb-20">
@@ -231,12 +222,12 @@ export default async function ProfilePage({ params }: PageProps) {
           <div className="flex items-start gap-6">
             <div className="relative">
               <Avatar className="w-24 h-24 border-4 border-primary/10">
-                <AvatarImage src={data?.avatarUrl || undefined} />
+                <AvatarImage src={profileData?.avatarUrl || undefined} />
                 <AvatarFallback className="text-2xl bg-linear-to-br from-primary/20 to-accent/20">
-                  {data?.name?.charAt(0) || data?.email?.charAt(0) || "?"}
+                  {profileData?.name?.charAt(0) || profileData?.email?.charAt(0) || "?"}
                 </AvatarFallback>
               </Avatar>
-              {data.isVerified && (
+              {profileData.isVerified && (
                 <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md">
                   ✓
                 </div>
@@ -245,11 +236,11 @@ export default async function ProfilePage({ params }: PageProps) {
 
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-1">
-                {data?.name}
+                {profileData?.name}
               </h2>
 
               <p className="text-muted-foreground mb-1 text-sm">
-                @{data?.username || "username"}
+                @{profileData?.username || "username"}
               </p>
 
               {/* only show email on own profile */}
@@ -273,7 +264,7 @@ export default async function ProfilePage({ params }: PageProps) {
                     <Star
                       key={i}
                       className={`w-4 h-4 ${
-                        i < Math.floor(data?.rating || 0)
+                        i < Math.floor(profileData?.rating || 0)
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-muted-foreground/30"
                         }`}
@@ -282,11 +273,11 @@ export default async function ProfilePage({ params }: PageProps) {
                 </div>
 
                 <span className="text-sm font-semibold">
-                  {data?.rating?.toFixed(1) || "0.0"}
+                  {profileData?.rating?.toFixed(1) || "0.0"}
                 </span>
 
                 <span className="text-xs text-muted-foreground">
-                  ({data?.ratingCount || 0} {data?.ratingCount === 1 ? 'review' : 'reviews'})
+                  ({profileData?.ratingCount || 0} {profileData?.ratingCount === 1 ? 'review' : 'reviews'})
                 </span>
               </div>
 
