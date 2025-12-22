@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
 import { profileEditSchema } from "../../zodSchema";
 import { logError, logInfo } from "@/lib/logger";
-import { requireUser } from "../../hooks";
+import { requireUser } from "../../hooks/hooks";
 
 export async function editProfile(prevState: any, formData: FormData) {
 

@@ -1,4 +1,4 @@
-import { requireUser } from "@/app/utils/hooks";
+import { requireUser } from "@/app/utils/hooks/hooks";
 import { db } from "@/lib/db";
 import { redirect, notFound } from "next/navigation";
 import { EditProfile } from "@/app/components/profile components/editProfile";

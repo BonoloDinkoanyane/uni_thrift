@@ -1,6 +1,6 @@
 import Register from "./RegisterForm";
 import { getUniversities } from "../utils/uniSelector";
-import { requireUser } from "../utils/hooks";
+import { requireUser } from "../utils/hooks/hooks";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 

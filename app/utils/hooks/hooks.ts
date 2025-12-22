@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getUserFromSession } from "../utils/sessionManagement/session";
-import { getCookiesAdapter } from "../utils/sessionManagement/cookiesAdapter";
+import { getUserFromSession } from "../sessionManagement/session";
+import { getCookiesAdapter } from "../sessionManagement/cookiesAdapter";
 import { logDebug } from "@/lib/logger";
 
 /**

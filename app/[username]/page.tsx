@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { requireUser } from "../utils/hooks";
+import { requireUser } from "../utils/hooks/hooks";
 import { db } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
