@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { signIn, signUp } from "@/app/utils/actions/account actions/actions";
-import { Eye, EyeOff } from "lucide-react";
+import { AlertCircle, Check, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { createLogger } from "@/lib/logger";
+import { useAvailabilityCheck } from "../utils/hooks/availabilityCheck";
+import { checkEmailAvailability, checkUsernameAvailability } from "../utils/actions/validation/actions";
 
 const logger = createLogger("LoginPage");
 
@@ -34,6 +36,29 @@ export default function LoginPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showSignupPassword, setShowSignupPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    // checks the availability as the user types
+    const usernameCheck = useAvailabilityCheck(
+        checkUsernameAvailability,
+        username,
+        500 // 500ms debounce
+    );
+
+    const emailCheck = useAvailabilityCheck(
+        checkEmailAvailability,
+        email,
+        500
+    );
+
+    // disables the submit button if checks are in progress or fields are unavailable
+    const isSignUpFormValid = 
+        username.length >= 3 &&
+        email.length > 0 &&
+        password.length >= 8 &&
+        usernameCheck.available === true &&
+        emailCheck.available === true &&
+        !usernameCheck.isChecking &&
+        !emailCheck.isChecking;
 
     const getPasswordStrength = (password: string) => {
         if (password.length === 0) return { strength: 0, label: "", color: "" };
@@ -99,6 +124,17 @@ export default function LoginPage() {
             return;
         }
 
+        // checks the availability of the email and username before submitting
+        if (usernameCheck.available !== true) {
+            setError("Please choose an available username");
+            return;
+        }
+
+        if (emailCheck.available !== true) {
+            setError("Please use an available email address");
+            return;
+        }
+
         // Email validation (university email)
         if (!email.endsWith(".edu.za") && !email.endsWith(".ac.za")) {
             setError("Please use a valid university email (.edu.za or .ac.za)");
@@ -140,11 +176,11 @@ export default function LoginPage() {
         }
     };
 
+    // resets all fields
     const switchMode = (newMode: AuthMode) => {
         setMode(newMode);
         setError("");
         setSuccess("");
-        // Reset all fields
         setIdentifier("");
         setPassword("");
         setUsername("");
@@ -159,7 +195,7 @@ export default function LoginPage() {
             subtitle={
                 mode === "signin"
                     ? "Sign in to your UniThrift account"
-                    : "Create your account to start trading"
+                    : "Create your account to start shopping"
             }
         >
             {/* Tab Navigation */}
@@ -287,14 +323,49 @@ export default function LoginPage() {
                             placeholder="johndoe"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="transition-all duration-200 focus:scale-[1.01]"
+                            className={`transition-all duration-200 focus:scale-[1.01] pr-10 ${
+                                    username.length > 0
+                                        ? usernameCheck.available === true
+                                            ? "border-green-500 focus-visible:ring-green-500"
+                                            : usernameCheck.available === false
+                                            ? "border-red-500 focus-visible:ring-red-500"
+                                            : ""
+                                        : ""
+                            }`}
                             autoComplete="username"
                             required
                             disabled={isLoading}
                         />
-                        <p className="text-xs text-muted-foreground">
-                            Letters, numbers, and underscores only
-                        </p>
+                        {/* Status Icon */}
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            {username.length > 0 && (
+                                <>
+                                    {usernameCheck.isChecking && (
+                                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                                    )}
+                                    {!usernameCheck.isChecking && usernameCheck.available === true && (
+                                        <Check className="w-4 h-4 text-green-500" />
+                                    )}
+                                    {!usernameCheck.isChecking && usernameCheck.available === false && (
+                                        <X className="w-4 h-4 text-red-500" />
+                                    )}
+                                </>
+                            )}
+                        </div>
+                        {/* Feedback Message */}
+                        {username.length > 0 && usernameCheck.message && (
+                            <p className={`text-xs flex items-center gap-1 ${
+                                usernameCheck.available ? "text-green-600" : "text-red-600"
+                            }`}>
+                                <AlertCircle className="w-3 h-3" />
+                                {usernameCheck.message}
+                            </p>
+                        )}
+                        {username.length === 0 && (
+                            <p className="text-xs text-muted-foreground">
+                                Letters, numbers, and underscores only
+                            </p>
+                        )}
                     </div>
 
                     {/* Email Field */}
@@ -308,14 +379,50 @@ export default function LoginPage() {
                             placeholder="you@university.ac.za"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="transition-all duration-200 focus:scale-[1.01]"
+                            className={`transition-all duration-200 focus:scale-[1.01] pr-10 ${
+                                    email.length > 0
+                                        ? emailCheck.available === true
+                                            ? "border-green-500 focus-visible:ring-green-500"
+                                            : emailCheck.available === false
+                                            ? "border-red-500 focus-visible:ring-red-500"
+                                            : ""
+                                        : ""
+                            }`}
                             autoComplete="email"
                             required
                             disabled={isLoading}
                         />
-                        <p className="text-xs text-muted-foreground">
-                            Must be a .edu.za or .ac.za email
-                        </p>
+                        {/* Status Icon */}
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            {email.length > 0 && (
+                                <>
+                                    {emailCheck.isChecking && (
+                                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                                    )}
+                                    {!emailCheck.isChecking && emailCheck.available === true && (
+                                        <Check className="w-4 h-4 text-green-500" />
+                                    )}
+                                    {!emailCheck.isChecking && emailCheck.available === false && (
+                                        <X className="w-4 h-4 text-red-500" />
+                                    )}
+                                </>
+                            )}
+                        </div>
+
+                        {/* Feedback Message */}
+                        {email.length > 0 && emailCheck.message && (
+                            <p className={`text-xs flex items-center gap-1 ${
+                                emailCheck.available ? "text-green-600" : "text-red-600"
+                            }`}>
+                                <AlertCircle className="w-3 h-3" />
+                                {emailCheck.message}
+                            </p>
+                        )}
+                        {email.length === 0 && (
+                            <p className="text-xs text-muted-foreground">
+                                Must be a .edu.za or .ac.za email
+                            </p>
+                        )}
                     </div>
 
                     {/* Password Field */}
