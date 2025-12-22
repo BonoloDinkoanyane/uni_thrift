@@ -336,6 +336,7 @@ export default function LoginPage() {
                             required
                             disabled={isLoading}
                         />
+                        
                         {/* Status Icon */}
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
                             {username.length > 0 && (
@@ -352,6 +353,7 @@ export default function LoginPage() {
                                 </>
                             )}
                         </div>
+
                         {/* Feedback Message */}
                         {username.length > 0 && usernameCheck.message && (
                             <p className={`text-xs flex items-center gap-1 ${
@@ -492,7 +494,13 @@ export default function LoginPage() {
                                 placeholder={!showConfirmPassword ? "••••••••" : ""}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="transition-all duration-200 focus:scale-[1.01] pr-12"
+                                className={`transition-all duration-200 focus:scale-[1.01] pr-12 ${
+                                    confirmPassword.length > 0 && signupPassword !== confirmPassword
+                                        ? "border-red-500"
+                                        : confirmPassword.length > 0 && signupPassword === confirmPassword
+                                        ? "border-green-500"
+                                        : ""
+                                }`}
                                 autoComplete="new-password"
                                 required
                                 disabled={isLoading}
@@ -506,6 +514,13 @@ export default function LoginPage() {
                                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
+                        
+                        {confirmPassword.length > 0 && signupPassword !== confirmPassword && (
+                            <p className="text-xs text-red-600 flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3" />
+                                Passwords do not match
+                            </p>
+                        )}
                     </div>
 
                     {/* Error/Success Message */}
