@@ -3,48 +3,51 @@ import { db } from "@/lib/db";
 import { redirect, notFound } from "next/navigation";
 import { EditProfile } from "@/app/components/profile components/editProfile";
 
+type PageProps = {
+    params: Promise<{
+        username: string;
+    }>;
+};
 
-async function getData(userId: string){
-
-    const data = await db.user.findUnique({
-        where: { userId },
-    });
-
-    if (!data) {
-        return notFound();
-    }
-
-    return data;
-}
-
-export default async function EditProfilePage() {
-    // Require authentication
+export default async function EditProfilePage({ params }: PageProps) {
+    
     const session = await requireUser();
-    const data = await getData(session.userId);
 
-    if (!session) {
-        redirect("/login");
+    // getting the username from the URL
+    const { username } = await params;
+
+    // security check - users can only edit their OWN profile
+    // this prevents someone from going to /other_user/edit and editing someone else's profile
+    if (session.username !== username) {
+        // if its not their profile - redirect them to their own edit page
+        redirect(`/${session.username}/edit`);
     }
 
-    // Fetch user data for the form
-    const user = await db.user.findUnique({
-        where: { userId: session?.userId },
+    // user's complete profile data from the db
+    const userData = await db.user.findUnique({
+        where: {
+            userId: session.userId,
+        },
         select: {
-            name: true,
+            userId: true,
             username: true,
+            name: true,
             email: true,
             bio: true,
+            avatarUrl: true,
         },
     });
-
-
+    
+    if (!userData) {
+        redirect("/login");
+    }
 
     // TypeScript now knows user is not null here
     return (
         <div className="min-h-screen bg-background py-8 px-4">
             <div className="container mx-auto max-w-2xl">
                 <EditProfile 
-                 data={data} 
+                 data={userData} 
                 />
             </div>
         </div>

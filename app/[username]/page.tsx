@@ -145,6 +145,7 @@ type ListingData = Awaited<ReturnType<typeof getListingData>>;
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   // extracting the username from URL params
   const { username } = await params;
+  const session = await getCurrentUser();
 
   // getting the currently logged-in user (doesn't redirect)
   // checks if the user is viewing their own profile vs someone else's
@@ -172,6 +173,18 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
     // only redirects if viewing your own incomplete profile
     redirect("/onboarding");
   }
+
+  // Try to find user by username
+    const user = await db.user.findFirst({
+        where: { username },
+        select: { userId: true, username: true, /* ... */ },
+    });
+
+  // If logged in and viewing own profile, redirect to current username
+    // This handles case where user's username changed but they bookmarked old URL
+    if (session && session.userId === user?.userId && session.username !== username) {
+        redirect(`/${session.username}`);
+    }
 
   const listings = await getListingData(profileData.userId);
 

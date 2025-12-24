@@ -108,3 +108,23 @@ function setCookie(sessionId: string, cookies: Pick<Cookies, "set">) {
   });
 
 }
+
+/**
+ * Update session data in Redis
+ * Used when user profile changes (like username)
+ */
+export async function updateSessionData( cookies: Cookies, updatedData: userSession): Promise<void> {
+    // Get the current session ID from cookie
+    const sessionCookie = cookies.get(COOKIE_SESSION_KEY);
+    
+    if (!sessionCookie) {
+        throw new Error("No session found");
+    }
+    
+    const sessionId = sessionCookie.value;
+    
+    // Update the session in Redis with new data
+    await redisClient.set(`session:${sessionId}`, sessionSchema.parse(updatedData), {
+        ex: SESSION_EXPIRATION_SECONDS, // Keep same expiration
+    });
+}

@@ -126,12 +126,12 @@ export default function LoginPage() {
 
         // checks the availability of the email and username before submitting
         if (usernameCheck.available !== true) {
-            setError("Please choose an available username");
+            setError("Username not available");
             return;
         }
 
         if (emailCheck.available !== true) {
-            setError("Please use an available email address");
+            setError("Email address already exists");
             return;
         }
 

@@ -17,8 +17,18 @@ import { SubmitButton } from '../SubmitButton';
 import { useRouter } from 'next/navigation';
 
 
+// defining a specific type for only the data we need for editing
+type EditProfileData = {
+    userId: string;
+    username: string;
+    name: string | null;
+    email: string;
+    bio: string | null;
+    avatarUrl: string | null;
+}
+
 type EditProfileProps = {
-    data: Prisma.UserGetPayload<{}>
+    data: EditProfileData;  // using the specific type instead of calling the full Prisma type
 }
 
 export function EditProfile({ data }: EditProfileProps) {
@@ -45,7 +55,33 @@ export function EditProfile({ data }: EditProfileProps) {
         },
         shouldValidate: "onBlur",
         shouldRevalidate: "onInput",
+
+        defaultValue: {
+            username: data.username ?? "",
+            name: data.name ?? "",
+            email: data.email ?? "",
+            bio: data.bio ?? "",
+        },
     });
+
+    // function syncs local state with Conform's field values when they change
+    useEffect(() => {
+        // When Conform updates field values (e.g., after validation error),
+        // sync them back to local state
+        if (fields.username.value !== undefined) {
+            setUsername(fields.username.value);
+        }
+        if (fields.name.value !== undefined) {
+            setName(fields.name.value);
+        }
+        if (fields.email.value !== undefined) {
+            setEmail(fields.email.value);
+        }
+        if (fields.bio.value !== undefined) {
+            setBio(fields.bio.value);
+        }
+    }, [fields.username.value, fields.name.value, fields.email.value, fields.bio.value]);
+
 
     // handles successful form submission
     useEffect(() => {
@@ -67,6 +103,22 @@ export function EditProfile({ data }: EditProfileProps) {
             }
         }
     }, [lastResult, router, username]);
+
+    // Debug: Log initial values
+    useEffect(() => {
+        console.log("Initial data:", {
+            username: data.username,
+            name: data.name,
+            bio: data.bio,
+            email: data.email
+        });
+        console.log("State after init:", {
+            username,
+            name,
+            bio,
+            email
+        });
+    }, []);
 
     return (
         <Card className="w-full max-w-2xl">
