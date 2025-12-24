@@ -3,33 +3,38 @@
 import { editProfile } from '@/app/utils/actions/profile actions/actions';
 import { profileEditSchema } from '@/app/utils/zodSchema';
 import { useForm } from "@conform-to/react";
-import { useFormState } from "react-dom";
 import { parseWithZod } from "@conform-to/zod";
 import { Prisma } from '@prisma/client';
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { CharacterCountField } from '../CharacterCountField';
+import { SubmitButton } from '../SubmitButton';
+import { useRouter } from 'next/navigation';
 
-interface IAppProps {
-    data: Prisma.UserGetPayload<{
-        select: {
-            name: true;
-            username: true;
-            email: true;
-            bio: true;
-        }
-    }>
+
+type EditProfileProps = {
+    data: Prisma.UserGetPayload<{}>
 }
 
-export function EditProfile({ data }: IAppProps) {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+export function EditProfile({ data }: EditProfileProps) {
 
     // Form state hooks
     const [lastResult, action] = useActionState(editProfile, undefined);
+    const router = useRouter();
+
+    //if the data is undefined/null, set the initial state to empty string
+    const [username, setUsername] = useState(data.username ?? "");
+    const [name, setName] = useState(data.name ?? "");
+    const [bio, setBio] = useState(data.bio ?? "");
+    const [email, setEmail] = useState(data.email ?? "");
+
+    //passing the default values int o useForm helps conform know the default/initial values 
+    // and keeps the stable across re-renders, and preserves user edits if it fails
     const [form, fields] = useForm({
         lastResult,
 
@@ -42,12 +47,26 @@ export function EditProfile({ data }: IAppProps) {
         shouldRevalidate: "onInput",
     });
 
-    // Handle form submission with loading state
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        setIsSubmitting(true);
-        // The form action will handle the actual submission
-        // This just manages the loading state
-    };
+    // handles successful form submission
+    useEffect(() => {
+        // Type guard: check if lastResult has the expected structure
+        if (
+            lastResult && 
+            typeof lastResult === 'object' && 
+            'status' in lastResult && 
+            lastResult.status === 'success'
+        ) {
+            // Safely access nested properties
+            const result = lastResult as { status: 'success'; value?: { username?: string } };
+            
+            if (result.value?.username) {
+                router.push(`/${result.value.username}`);
+            } else {
+                // Fallback: redirect using current username if new one isn't available
+                router.push(`/${username}`);
+            }
+        }
+    }, [lastResult, router, username]);
 
     return (
         <Card className="w-full max-w-2xl">
@@ -60,7 +79,7 @@ export function EditProfile({ data }: IAppProps) {
             <CardContent>
                 <form
                     id={form.id}
-                    onSubmit={handleSubmit}
+                    onSubmit={form.onSubmit}
                     action={action}
                     noValidate
                     className="space-y-6"
@@ -69,7 +88,11 @@ export function EditProfile({ data }: IAppProps) {
                     {form.errors && form.errors.length > 0 && (
                         <div className="p-3 bg-destructive/10 border border-destructive rounded-md">
                             <p className="text-sm text-destructive font-medium">
-                                {Array.isArray(form.errors) ? form.errors.join(", ") : typeof form.errors === 'string' ? form.errors : JSON.stringify(form.errors)}
+                                {Array.isArray(form.errors) 
+                                ? form.errors.join(", ") 
+                                : typeof form.errors === 'string' 
+                                ? form.errors 
+                                : JSON.stringify(form.errors)}
                             </p>
                         </div>
                     )}
@@ -83,7 +106,8 @@ export function EditProfile({ data }: IAppProps) {
                             key={fields.name.key}
                             id={fields.name.id}
                             name={fields.name.name}
-                            defaultValue={data.name || ""}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="John Doe"
                             className="transition-all duration-200 focus:scale-[1.01]"
                             aria-invalid={fields.name.errors ? true : undefined}
@@ -101,15 +125,17 @@ export function EditProfile({ data }: IAppProps) {
                         <Label htmlFor={fields.username.id} className="text-sm font-medium">
                             Username
                         </Label>
-                        <Input
+                        <CharacterCountField
                             key={fields.username.key}
                             id={fields.username.id}
                             name={fields.username.name}
-                            defaultValue={data.username || ""}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            maxLength={30}
                             placeholder="johndoe"
-                            className="transition-all duration-200 focus:scale-[1.01]"
                             aria-invalid={fields.username.errors ? true : undefined}
                             aria-describedby={fields.username.errors ? `${fields.username.id}-error` : undefined}
+                            as='input'
                         />
                         {fields.username.errors && (
                             <p id={`${fields.username.id}-error`} className="text-sm text-red-600">
@@ -127,8 +153,9 @@ export function EditProfile({ data }: IAppProps) {
                             key={fields.email.key}
                             id={fields.email.id}
                             name={fields.email.name}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             type="email"
-                            defaultValue={data.email || ""}
                             placeholder="john@university.ac.za"
                             className="transition-all duration-200 focus:scale-[1.01]"
                             aria-invalid={fields.email.errors ? true : undefined}
@@ -147,15 +174,16 @@ export function EditProfile({ data }: IAppProps) {
                             Bio
                             <span className="text-muted-foreground font-normal ml-2">(Optional)</span>
                         </Label>
-                        <Textarea
+                        <CharacterCountField
                             key={fields.bio.key}
                             id={fields.bio.id}
                             name={fields.bio.name}
-                            defaultValue={data.bio || ""}
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
                             placeholder="Tell us about yourself..."
                             rows={4}
+                            as='textarea'
                             maxLength={160}
-                            className="transition-all duration-200 focus:scale-[1.01] resize-none"
                             aria-invalid={fields.bio.errors ? true : undefined}
                             aria-describedby={fields.bio.errors ? `${fields.bio.id}-error` : undefined}
                         />
@@ -164,35 +192,26 @@ export function EditProfile({ data }: IAppProps) {
                                 {fields.bio.errors}
                             </p>
                         )}
-                        <p className="text-xs text-muted-foreground">
-                            {(data.bio?.length || 0)}/160 characters
-                        </p>
                     </div>
 
                     {/* Submit Button */}
-                    <div className="flex gap-3 pt-4">
-                        <Button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="flex-1"
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Saving...
-                                </>
-                            ) : (
-                                "Save Changes"
-                            )}
-                        </Button>
+                    <div className="flex items-center mt-6 justify-end">
+                        <div>
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={() => window.history.back()}
-                            disabled={isSubmitting}
+                            onClick={() => router.back()}
                         >
                             Cancel
                         </Button>
+                        </div>
+
+                        <div className='w-50'>
+                            <SubmitButton 
+                             text="Save Changes" 
+                             variant="default" 
+                            />
+                        </div>
                     </div>
                 </form>
             </CardContent>
