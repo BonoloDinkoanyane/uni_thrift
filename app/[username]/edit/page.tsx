@@ -37,9 +37,9 @@ export default async function EditProfilePage({ params }: PageProps) {
             avatarUrl: true,
         },
     });
-    
+
     if (!userData) {
-        redirect("/login");
+        return notFound();
     }
 
     // TypeScript now knows user is not null here

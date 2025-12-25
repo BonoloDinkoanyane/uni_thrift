@@ -31,6 +31,7 @@ export function CharacterCountField({
   as = 'input',
   rows = 4,
 }: CharacterCountFieldProps) {
+  
   const [value, setValue] = useState(defaultValue);
 
   useEffect(() => {
