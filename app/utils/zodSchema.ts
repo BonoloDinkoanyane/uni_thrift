@@ -86,3 +86,12 @@ export const profileEditSchema = z.object({
         .max(160, { message: "Bio cannot exceed 160 characters" })
         .optional(),
 });
+
+const formSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters").max(100),
+  description: z.string().min(10, "Description must be at least 10 characters").max(1000),
+  price: z.string().regex(/^\d+(\.\d{1,2})?$/, "Invalid price format"),
+  category: z.string().min(1, "Please select a category"),
+  institution: z.string().min(1, "Please enter your institution"),
+  campus: z.string().min(1, "Please enter your campus"),
+});
