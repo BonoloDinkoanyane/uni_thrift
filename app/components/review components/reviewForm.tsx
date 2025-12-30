@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/utils/hooks/use-toast";
+import { useToast } from "@/app/utils/hooks/use-toast";
+import { db } from "@/lib/db";
 interface ReviewFormProps {
   sellerId: string;
   listingId?: string;
@@ -23,7 +24,6 @@ export function ReviewForm ({ sellerId, listingId, onSuccess }: ReviewFormProps)
       toast({
         title: "Rating Required",
         description: "Please select a star rating",
-        variant: "destructive",
       });
       return;
     }
@@ -31,18 +31,17 @@ export function ReviewForm ({ sellerId, listingId, onSuccess }: ReviewFormProps)
     setIsSubmitting(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await db.auth.getUser();
       
       if (!user) {
         toast({
           title: "Authentication Required",
           description: "Please log in to leave a review",
-          variant: "destructive",
         });
         return;
       }
 
-      const { error } = await supabase.from("reviews").insert({
+      const { error } = await db.from("reviews").insert({
         reviewer_id: user.id,
         seller_id: sellerId,
         listing_id: listingId,
@@ -55,7 +54,6 @@ export function ReviewForm ({ sellerId, listingId, onSuccess }: ReviewFormProps)
           toast({
             title: "Already Reviewed",
             description: "You've already reviewed this seller for this listing",
-            variant: "destructive",
           });
         } else {
           throw error;
@@ -76,7 +74,6 @@ export function ReviewForm ({ sellerId, listingId, onSuccess }: ReviewFormProps)
       toast({
         title: "Error",
         description: "Failed to submit review. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
