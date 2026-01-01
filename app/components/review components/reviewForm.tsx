@@ -30,55 +30,55 @@ export function ReviewForm ({ sellerId, listingId, onSuccess }: ReviewFormProps)
 
     setIsSubmitting(true);
 
-    try {
-      const { data: { user } } = await db.auth.getUser();
+//     try {
+//       const { data: { user } } = await db.auth.getUser();
       
-      if (!user) {
-        toast({
-          title: "Authentication Required",
-          description: "Please log in to leave a review",
-        });
-        return;
-      }
+//       if (!user) {
+//         toast({
+//           title: "Authentication Required",
+//           description: "Please log in to leave a review",
+//         });
+//         return;
+//       }
 
-      const { error } = await db.from("reviews").insert({
-        reviewer_id: user.id,
-        seller_id: sellerId,
-        listing_id: listingId,
-        rating,
-        comment: comment.trim() || null,
-      });
+//       const { error } = await db.from("reviews").insert({
+//         reviewer_id: user.id,
+//         seller_id: sellerId,
+//         listing_id: listingId,
+//         rating,
+//         comment: comment.trim() || null,
+//       });
 
-      if (error) {
-        if (error.code === "23505") {
-          toast({
-            title: "Already Reviewed",
-            description: "You've already reviewed this seller for this listing",
-          });
-        } else {
-          throw error;
-        }
-        return;
-      }
+//       if (error) {
+//         if (error.code === "23505") {
+//           toast({
+//             title: "Already Reviewed",
+//             description: "You've already reviewed this seller for this listing",
+//           });
+//         } else {
+//           throw error;
+//         }
+//         return;
+//       }
 
-      toast({
-        title: "Review Submitted",
-        description: "Thank you for your feedback!",
-      });
+//       toast({
+//         title: "Review Submitted",
+//         description: "Thank you for your feedback!",
+//       });
 
-      setRating(0);
-      setComment("");
-      onSuccess?.();
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      toast({
-        title: "Error",
-        description: "Failed to submit review. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+//       setRating(0);
+//       setComment("");
+//       onSuccess?.();
+//     } catch (error) {
+//       console.error("Error submitting review:", error);
+//       toast({
+//         title: "Error",
+//         description: "Failed to submit review. Please try again.",
+//       });
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -130,4 +130,4 @@ export function ReviewForm ({ sellerId, listingId, onSuccess }: ReviewFormProps)
     </form>
   );
 };
-
+}
